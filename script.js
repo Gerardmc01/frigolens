@@ -58,69 +58,52 @@ const MOCK_RECIPES = [
 // DOM Elements
 const app = document.getElementById('app');
 
-// Firebase Functions
+// Firebase Functions (with localStorage fallback)
 async function saveFavorite(recipe) {
     if (!state.user) return;
 
-    try {
-        const favRef = window.firestoreCollection(window.firebaseDB, 'favorites');
-        await window.firestoreAddDoc(favRef, {
-            userId: state.user.email,
-            recipe: recipe,
-            createdAt: new Date().toISOString()
-        });
-        loadFavorites();
-    } catch (error) {
-        console.error('Error saving favorite:', error);
+    // Use localStorage for now
+    const favKey = `favorites_${state.user.email}`;
+    const favorites = JSON.parse(localStorage.getItem(favKey) || '[]');
+    if (!favorites.some(f => f.id === recipe.id)) {
+        favorites.push(recipe);
+        localStorage.setItem(favKey, JSON.stringify(favorites));
     }
+    await loadFavorites();
 }
 
 async function removeFavorite(recipeId) {
     if (!state.user) return;
 
-    try {
-        const favRef = window.firestoreCollection(window.firebaseDB, 'favorites');
-        const q = window.firestoreQuery(favRef,
-            window.firestoreWhere('userId', '==', state.user.email),
-            window.firestoreWhere('recipe.id', '==', recipeId)
-        );
-        const snapshot = await window.firestoreGetDocs(q);
-        snapshot.forEach(async (doc) => {
-            await window.firestoreDeleteDoc(doc.ref);
-        });
-        loadFavorites();
-    } catch (error) {
-        console.error('Error removing favorite:', error);
-    }
+    const favKey = `favorites_${state.user.email}`;
+    const favorites = JSON.parse(localStorage.getItem(favKey) || '[]');
+    const filtered = favorites.filter(f => f.id !== recipeId);
+    localStorage.setItem(favKey, JSON.stringify(filtered));
+    await loadFavorites();
 }
 
 async function loadFavorites() {
-    if (!state.user) return;
-
-    try {
-        const favRef = window.firestoreCollection(window.firebaseDB, 'favorites');
-        const q = window.firestoreQuery(favRef, window.firestoreWhere('userId', '==', state.user.email));
-        const snapshot = await window.firestoreGetDocs(q);
-        state.favorites = snapshot.docs.map(doc => doc.data().recipe);
-    } catch (error) {
-        console.error('Error loading favorites:', error);
+    if (!state.user) {
+        state.favorites = [];
+        return;
     }
+
+    const favKey = `favorites_${state.user.email}`;
+    state.favorites = JSON.parse(localStorage.getItem(favKey) || '[]');
 }
 
 async function saveToHistory(scan) {
     if (!state.user) return;
 
-    try {
-        const histRef = window.firestoreCollection(window.firebaseDB, 'history');
-        await window.firestoreAddDoc(histRef, {
-            userId: state.user.email,
-            ingredients: scan.ingredients,
-            recipes: scan.recipes,
-            createdAt: new Date().toISOString()
-        });
-    } catch (error) {
-        console.error('Error saving history:', error);
-    }
+    const histKey = `history_${state.user.email}`;
+    const history = JSON.parse(localStorage.getItem(histKey) || '[]');
+    history.unshift({
+        ...scan,
+        createdAt: new Date().toISOString()
+    });
+    // Keep only last 20 scans
+    if (history.length > 20) history.pop();
+    localStorage.setItem(histKey, JSON.stringify(history));
 }
 
 // Components
@@ -138,8 +121,8 @@ const BottomNav = (activeTab) => `
         <button class="nav-item ${activeTab === 'history' ? 'active' : ''}" onclick="showHistory()">
             <i class="ph ph-clock-counter-clockwise"></i>
         </button>
-        <button class="nav-item" onclick="openSettings()">
-            <i class="ph ph-user"></i>
+        <button class="nav-item ${activeTab === 'profile' ? 'active' : ''}" onclick="showProfile()">
+            <i class="ph${activeTab === 'profile' ? '-fill' : ''} ph-user"></i>
         </button>
     </nav>
 `;
@@ -166,24 +149,18 @@ const views = {
         <div class="container">
             <div class="welcome-view" style="justify-content: center; padding: 32px;">
                 <div style="text-align: center; margin-bottom: 40px;">
-                    <h1 class="welcome-title">Crear Cuenta</h1>
-                    <p class="welcome-text">Guarda tus recetas y preferencias.</p>
+                    <h1 class="welcome-title">Bienvenido</h1>
+                    <p class="welcome-text">Inicia sesión para guardar tus recetas favoritas.</p>
                 </div>
 
                 <div class="login-options">
-                    <button class="btn-social btn-apple" onclick="mockLogin('Apple')">
-                        <i class="ph-fill ph-apple-logo"></i> Continuar con Apple
-                    </button>
-                    <button class="btn-social btn-google" onclick="mockLogin('Google')">
+                    <button class="btn-social btn-google" onclick="loginWithGoogle()">
                         <i class="ph-fill ph-google-logo"></i> Continuar con Google
-                    </button>
-                    <button class="btn-social btn-email" onclick="goHome()">
-                        <i class="ph-fill ph-envelope"></i> Continuar con Email
                     </button>
                 </div>
 
                 <p style="text-align: center; margin-top: 32px; color: var(--text-muted); font-size: 0.9rem;">
-                    ¿Ya tienes cuenta? <a href="#" onclick="goHome()" style="color: var(--primary); font-weight: 600; text-decoration: none;">Iniciar Sesión</a>
+                    ¿Solo quieres probar? <a href="#" onclick="skipLogin()" style="color: var(--primary); font-weight: 600; text-decoration: none;">Continuar sin cuenta</a>
                 </p>
             </div>
         </div>
@@ -275,6 +252,45 @@ const views = {
                 `}
             </div>
             ${BottomNav('favorites')}
+        </div>
+    `,
+
+    profile: () => `
+        <div class="container">
+            <div style="padding: 24px;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 32px;">Mi Perfil</h1>
+                
+                ${state.user ? `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 16px; font-size: 2rem;">
+                            ${state.user.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit: cover;">` : '👤'}
+                        </div>
+                        <h2 style="font-size: 1.3rem; margin-bottom: 4px;">${state.user.name}</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">${state.user.email}</p>
+                    </div>
+
+                    <div style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-card);">
+                        <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Configuración</h3>
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Gemini API Key</label>
+                        <input type="password" id="api-key-input-profile" class="input-field" placeholder="Pega tu API Key aquí..." value="${state.apiKey}">
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 16px;">
+                            Necesaria para que la IA funcione.
+                        </p>
+                        <button class="btn-primary" onclick="saveApiKey()">Guardar API Key</button>
+                    </div>
+
+                    <button onclick="confirmLogout()" style="width: 100%; padding: 16px; background: white; border: 1px solid #FF4B4B; color: #FF4B4B; border-radius: 100px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-card);">
+                        <i class="ph ph-sign-out"></i> Cerrar Sesión
+                    </button>
+                ` : `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="ph ph-user-circle" style="font-size: 4rem; color: var(--text-muted); display: block; margin-bottom: 16px;"></i>
+                        <p style="color: var(--text-muted); margin-bottom: 24px;">Inicia sesión para guardar tus recetas favoritas</p>
+                        <button class="btn-primary" onclick="render('login')">Iniciar Sesión</button>
+                    </div>
+                `}
+            </div>
+            ${BottomNav('profile')}
         </div>
     `,
 
@@ -484,43 +500,64 @@ function render(viewName, param) {
     window.scrollTo(0, 0);
 }
 
-window.mockLogin = async (provider) => {
-    if (provider === 'Google') {
-        try {
-            const googleProvider = new window.GoogleAuthProvider();
-            const result = await window.signInWithPopup(window.firebaseAuth, googleProvider);
-            const user = result.user;
+window.loginWithGoogle = async () => {
+    try {
+        const googleProvider = new window.GoogleAuthProvider();
+        const result = await window.signInWithPopup(window.firebaseAuth, googleProvider);
+        const user = result.user;
 
-            state.user = {
-                name: user.displayName || 'FrigoLender',
-                email: user.email,
-                photo: user.photoURL
-            };
+        state.user = {
+            name: user.displayName || 'FrigoLender',
+            email: user.email,
+            photo: user.photoURL
+        };
 
-            localStorage.setItem('user', JSON.stringify(state.user));
-            await loadFavorites();
-            goHome();
-        } catch (error) {
-            console.error("Error en login:", error);
-            alert("Error al iniciar sesión con Google. Inténtalo de nuevo.");
-        }
-    } else if (provider === 'Apple') {
-        alert("Login con Apple próximamente. Por ahora usa Google o Email.");
-    } else {
+        localStorage.setItem('user', JSON.stringify(state.user));
+        await loadFavorites();
         goHome();
+    } catch (error) {
+        console.error("Error en login:", error);
+        if (error.code === 'auth/popup-closed-by-user') {
+            // User closed popup, no need to show error
+            return;
+        }
+        alert("Error al iniciar sesión con Google. Inténtalo de nuevo.");
+    }
+};
+
+window.skipLogin = () => {
+    // Allow user to continue without login
+    state.user = null;
+    goHome();
+};
+
+window.confirmLogout = () => {
+    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        logout();
     }
 };
 
 window.logout = async () => {
     try {
-        await window.signOut(window.firebaseAuth);
+        if (window.firebaseAuth.currentUser) {
+            await window.signOut(window.firebaseAuth);
+        }
         localStorage.removeItem('user');
         state.user = null;
         state.favorites = [];
-        closeSettings();
         render('welcome');
     } catch (error) {
         console.error("Error en logout:", error);
+        alert("Error al cerrar sesión");
+    }
+};
+
+window.saveApiKey = () => {
+    const input = document.getElementById('api-key-input-profile');
+    if (input) {
+        state.apiKey = input.value.trim();
+        localStorage.setItem('gemini_api_key', state.apiKey);
+        alert("¡API Key guardada!");
     }
 };
 
@@ -536,6 +573,7 @@ window.goHome = () => render('home');
 window.startCamera = () => render('camera');
 window.showFavorites = () => render('favorites');
 window.showHistory = () => alert('Historial próximamente');
+window.showProfile = () => render('profile');
 
 window.viewRecipe = (recipeId) => {
     const recipe = [...MOCK_RECIPES, ...state.recipes].find(r => r.id === recipeId);
