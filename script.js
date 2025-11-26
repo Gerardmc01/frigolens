@@ -1,11 +1,12 @@
 // State Management
 const state = {
-    view: 'home', // home, camera, selection, results
+    view: 'welcome', // welcome, login, home, camera, selection, results
     inventory: [],
     selectedIngredients: new Set(),
     recipes: [],
     capturedImage: null,
-    apiKey: localStorage.getItem('gemini_api_key') || ''
+    apiKey: localStorage.getItem('gemini_api_key') || '',
+    user: null // Will store user info
 };
 
 // Mock Data
@@ -62,6 +63,49 @@ const BottomNav = (activeTab) => `
 
 // Views
 const views = {
+    welcome: () => `
+        <div class="container">
+            <div class="welcome-view">
+                <div class="welcome-image-container">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
+                </div>
+                <div class="welcome-content">
+                    <div class="brand-tag">FrigoLens</div>
+                    <h1 class="welcome-title">Comida deliciosa<br>para tu familia</h1>
+                    <p class="welcome-text">Descubre recetas increíbles con lo que ya tienes en tu nevera.</p>
+                    <button class="btn-primary" onclick="render('login')">Empezar a Cocinar</button>
+                </div>
+            </div>
+        </div>
+    `,
+
+    login: () => `
+        <div class="container">
+            <div class="welcome-view" style="justify-content: center; padding: 32px;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h1 class="welcome-title">Crear Cuenta</h1>
+                    <p class="welcome-text">Guarda tus recetas y preferencias.</p>
+                </div>
+
+                <div class="login-options">
+                    <button class="btn-social btn-apple" onclick="mockLogin('Apple')">
+                        <i class="ph-fill ph-apple-logo"></i> Continuar con Apple
+                    </button>
+                    <button class="btn-social btn-google" onclick="mockLogin('Google')">
+                        <i class="ph-fill ph-google-logo"></i> Continuar con Google
+                    </button>
+                    <button class="btn-social btn-email" onclick="goHome()">
+                        <i class="ph-fill ph-envelope"></i> Continuar con Email
+                    </button>
+                </div>
+
+                <p style="text-align: center; margin-top: 32px; color: var(--text-muted); font-size: 0.9rem;">
+                    ¿Ya tienes cuenta? <a href="#" onclick="goHome()" style="color: var(--primary); font-weight: 600; text-decoration: none;">Iniciar Sesión</a>
+                </p>
+            </div>
+        </div>
+    `,
+
     home: () => `
         <div class="container">
             <header class="home-header">
@@ -70,7 +114,7 @@ const views = {
                         <div class="avatar">👩‍🍳</div>
                         <div class="greeting">
                             <p>Buenas tardes,</p>
-                            <h1>FrigoLender</h1>
+                            <h1>${state.user ? state.user.name : 'FrigoLender'}</h1>
                         </div>
                     </div>
                     <button class="camera-btn-sm" style="background: white; color: black; box-shadow: var(--shadow-card);" onclick="openSettings()">
@@ -116,7 +160,7 @@ const views = {
             <div class="popular-section">
                 <div class="section-title">Recientes</div>
                 <div style="padding-right: 24px;">
-                    <div style="background: white; border-radius: 20px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: var(--shadow-card);">
+                    <div style="background: white; border-radius: 20px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: var(--shadow-card); border: 1px solid #F3F4F6;">
                         <div style="width: 60px; height: 60px; background: #FFF2E5; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🥑</div>
                         <div>
                             <div style="font-weight: 700; margin-bottom: 4px;">Tostada de Aguacate</div>
@@ -260,6 +304,12 @@ function render(viewName, param) {
     }
     window.scrollTo(0, 0);
 }
+
+window.mockLogin = (provider) => {
+    // Simulate login for demo purposes
+    state.user = { name: 'Gerard', email: 'gerard@example.com' };
+    goHome();
+};
 
 window.goHome = () => render('home');
 window.startCamera = () => render('camera');
@@ -439,5 +489,7 @@ async function generateRecipes() {
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
-    render('home');
+    // Check if user is logged in (mock)
+    // For now always show welcome screen
+    render('welcome');
 });
