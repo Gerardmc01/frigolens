@@ -68,14 +68,22 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(30px, 50px); }
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(30px, 50px);
+    }
 }
 
 /* Layout */
 #app {
     width: 100%;
-    max-width: 480px; /* Mobile first constraint for desktop view */
+    max-width: 480px;
+    /* Mobile first constraint for desktop view */
     margin: 0 auto;
     min-height: 100vh;
     position: relative;
@@ -171,6 +179,85 @@ p {
     justify-content: center;
     align-items: center;
     text-align: center;
+    position: relative;
+}
+
+.settings-btn {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-content {
+    background: #1a1a24;
+    padding: 30px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid var(--glass-border);
+    transform: scale(0.9);
+    transition: transform 0.3s;
+}
+
+.modal-overlay.open .modal-content {
+    transform: scale(1);
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.input-field {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    font-family: var(--font-main);
 }
 
 .hero-emoji {
@@ -180,8 +267,15 @@ p {
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
 /* Camera View */
@@ -217,7 +311,7 @@ p {
     height: 70px;
     border-radius: 50%;
     background: white;
-    border: 4px solid rgba(255,255,255,0.3);
+    border: 4px solid rgba(255, 255, 255, 0.3);
     cursor: pointer;
 }
 
@@ -234,10 +328,23 @@ p {
 }
 
 @keyframes scan {
-    0% { top: 0; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
+    0% {
+        top: 0;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
 }
 
 /* Results View */
@@ -262,7 +369,7 @@ p {
 }
 
 .item-chip:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
 }
 
@@ -271,7 +378,7 @@ p {
 }
 
 .recipe-card {
-    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
     border-radius: 20px;
     padding: 20px;
     margin-bottom: 16px;
@@ -283,7 +390,7 @@ p {
 
 .recipe-icon {
     font-size: 2.5rem;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     width: 60px;
     height: 60px;
     display: flex;
@@ -305,8 +412,15 @@ p {
 
 /* Animations */
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .fade-enter {
