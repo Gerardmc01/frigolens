@@ -203,20 +203,48 @@ const views = {
         </div>
     `,
 
-    home: () => `
+    home: () => {
+        const tip = getRandomTip();
+        return `
         <div class="container">
-            <header class="home-header">
+            <!-- Desktop Header -->
+            <div class="desktop-header desktop-only">
+                <div class="desktop-logo">
+                    <i class="ph-fill ph-cooking-pot"></i> FRIGOLENS AI
+                </div>
+                <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
+                     <div class="avatar" style="width: 40px; height: 40px; font-size: 1.2rem;">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
+                     <span style="font-weight: 600;">${state.user ? state.user.name : 'Invitado'}</span>
+                </div>
+            </div>
+
+            <!-- Desktop Nav -->
+            <div class="desktop-nav desktop-only">
+                <div class="desktop-nav-item active"><i class="ph ph-magnifying-glass"></i> Buscar</div>
+                <div class="desktop-nav-item" onclick="surpriseMe()"><i class="ph ph-sparkle"></i> Sugerencias IA</div>
+                <div class="desktop-nav-item" onclick="startCamera()"><i class="ph ph-camera"></i> Escanear</div>
+                <div class="desktop-nav-item" onclick="showFavorites()"><i class="ph ph-heart"></i> Favoritos</div>
+            </div>
+
+            <!-- Desktop Search Section -->
+            <div class="desktop-search-container desktop-only">
+                <h2 style="margin-bottom: 20px; font-size: 1.5rem;">🔍 Buscar Recetas</h2>
+                <div class="desktop-search-bar">
+                    <input type="text" class="desktop-search-input" id="desktop-search-input" placeholder="¿Qué te apetece cocinar hoy?" onkeyup="filterRecipes()">
+                    <button class="desktop-search-btn"><i class="ph ph-magnifying-glass"></i></button>
+                </div>
+            </div>
+
+            <!-- Mobile Header -->
+            <header class="home-header mobile-only">
                 <div class="user-row">
                     <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
                         <div class="avatar">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
                         <div class="greeting">
-                            <p>Buenas tardes,</p>
+                            <p>${getGreeting()},</p>
                             <h1>${state.user ? state.user.name.split(' ')[0] : 'FrigoLender'}</h1>
                         </div>
                     </div>
-                    <button class="camera-btn-sm" style="background: white; color: black; box-shadow: var(--shadow-card);" onclick="openSettings()">
-                        <i class="ph ph-gear"></i>
-                    </button>
                 </div>
                 
                 <div class="search-bar">
@@ -235,8 +263,23 @@ const views = {
                 </div>
             </div>
 
+            <div style="padding: 0 24px 24px;">
+                <div style="background: linear-gradient(135deg, #FFF2E5 0%, #FFE5CC 100%); border-radius: 20px; padding: 20px; display: flex; align-items: start; gap: 16px; box-shadow: var(--shadow-card);">
+                    <div style="font-size: 2rem;">${tip.icon}</div>
+                    <div>
+                        <h3 style="font-size: 0.95rem; margin-bottom: 4px; color: var(--primary);">Tip del Día</h3>
+                        <p style="font-size: 0.9rem; line-height: 1.4; color: var(--text-main);">${tip.text}</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="popular-section">
-                <div class="section-title">Recetas Populares</div>
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    Recetas Populares
+                    <button onclick="surpriseMe()" style="background: var(--primary-light); color: var(--primary); border: none; padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                        🎲 Sorpréndeme
+                    </button>
+                </div>
                 <div class="horizontal-scroll" id="recipes-container">
                     ${[...MOCK_RECIPES, ...state.recipes].map(recipe => `
                         <div class="recipe-card-lg" data-title="${recipe.title.toLowerCase()}" data-category="${recipe.category || 'all'}" onclick="viewRecipe('${recipe.id}')">
@@ -259,7 +302,8 @@ const views = {
 
             ${BottomNav('home')}
         </div>
-    `,
+        `;
+    },
 
     favorites: () => `
         <div class="container">
@@ -272,7 +316,7 @@ const views = {
                         <p>Aún no tienes favoritos.<br>¡Empieza a guardar recetas que te gusten!</p>
                     </div>
                 ` : `
-                    <div style="display: grid; gap: 20px;">
+                    <div class="responsive-grid">
                         ${state.favorites.map(recipe => `
                             <div class="recipe-card-lg" onclick="viewRecipe('${recipe.id}')">
                                 <div class="recipe-img-lg" style="height: 160px;">
@@ -308,13 +352,13 @@ const views = {
                     </div>
 
                     <div style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-card);">
-                        <button onclick="openSettings()" style="width: 100%; padding: 16px; background: var(--bg-input); border: none; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <i class="ph ph-gear" style="font-size: 1.5rem;"></i>
-                                <span style="font-weight: 600;">Configuración</span>
-                            </div>
-                            <i class="ph ph-caret-right"></i>
-                        </button>
+                        <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Configuración</h3>
+                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Clave de Acceso (IA)</label>
+                        <input type="password" id="api-key-input-profile" class="input-field" placeholder="Pega tu clave aquí..." value="${state.apiKey}">
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 16px;">
+                            Necesaria para que la IA funcione.
+                        </p>
+                        <button class="btn-primary" onclick="saveApiKey()">Guardar Clave</button>
                     </div>
 
                     <button onclick="confirmLogout()" style="width: 100%; padding: 16px; background: white; border: 1px solid #FF4B4B; color: #FF4B4B; border-radius: 100px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-card);">
@@ -464,7 +508,7 @@ const views = {
                 </button>
                 <h1 style="font-size: 1.8rem; margin-bottom: 24px;">Recetas para ti</h1>
                 
-                <div style="display: grid; gap: 24px;">
+                <div class="responsive-grid">
                     ${state.recipes.map(recipe => `
                         <div class="recipe-card-lg" style="box-shadow: 0 4px 20px rgba(0,0,0,0.08);" onclick="viewRecipe('${recipe.id}')">
                             <div class="recipe-img-lg" style="height: 200px;">
@@ -493,50 +537,43 @@ const views = {
     `
 };
 
-// Settings Modal
-const settingsModal = `
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 20px;">Configuración</h2>
-            
-            ${state.user ? `
-                <div style="text-align: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border-light);">
-                    <div class="avatar" style="width: 60px; height: 60px; margin: 0 auto 12px;">
-                        ${state.user.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👤'}
-                    </div>
-                    <p style="font-weight: 600;">${state.user.name}</p>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">${state.user.email}</p>
-                    <button onclick="logout()" style="margin-top: 12px; padding: 8px 16px; background: none; border: 1px solid var(--primary); color: var(--primary); border-radius: 100px; cursor: pointer;">
-                        Cerrar Sesión
-                    </button>
-                </div>
-            ` : ''}
-            
-            <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">Clave de Acceso (IA)</label>
-            <input type="password" id="api-key-input" class="input-field" placeholder="Pega tu clave aquí...">
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 24px;">
-                Necesaria para que la IA funcione.
-            </p>
-            <button class="btn-primary" onclick="saveSettings()">Guardar</button>
-            <button style="width: 100%; padding: 16px; background: none; border: none; color: var(--text-muted); font-weight: 600; margin-top: 8px;" onclick="closeSettings()">Cancelar</button>
-        </div>
-    </div>
-`;
+// Cooking Tips
+const COOKING_TIPS = [
+    { icon: '🥑', text: 'Para madurar aguacates rápido, guárdalos en una bolsa de papel con un plátano.' },
+    { icon: '🍋', text: 'Saca más jugo a los limones rodándolos sobre la mesa antes de exprimirlos.' },
+    { icon: '🧄', text: 'Pela ajos fácilmente agitándolos fuertemente dentro de dos boles de metal.' },
+    { icon: '🧂', text: 'Si te has pasado de sal en una sopa, añade una patata pelada para que absorba el exceso.' },
+    { icon: '🥚', text: 'Para saber si un huevo es fresco, sumérgelo en agua: si se hunde, es fresco.' }
+];
+
+const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Buenos días';
+    if (hour < 20) return 'Buenas tardes';
+    return 'Buenas noches';
+};
+
+const getRandomTip = () => {
+    const dayIndex = new Date().getDate() % COOKING_TIPS.length;
+    return COOKING_TIPS[dayIndex];
+};
 
 // Logic
 function render(viewName, param) {
     state.view = viewName;
     app.innerHTML = views[viewName](param);
 
-    if (!document.getElementById('settings-modal')) {
-        document.body.insertAdjacentHTML('beforeend', settingsModal);
-    }
-
     if (viewName === 'camera') {
         initCamera();
     }
     window.scrollTo(0, 0);
 }
+
+window.surpriseMe = () => {
+    const allRecipes = [...MOCK_RECIPES, ...state.recipes];
+    const randomRecipe = allRecipes[Math.floor(Math.random() * allRecipes.length)];
+    viewRecipe(randomRecipe.id);
+};
 
 window.loginWithGoogle = async () => {
     try {
@@ -648,8 +685,16 @@ window.selectCategory = (element, category) => {
 };
 
 window.filterRecipes = () => {
-    const searchInput = document.getElementById('search-input');
-    const query = searchInput ? searchInput.value.toLowerCase() : '';
+    const mobileInput = document.getElementById('search-input');
+    const desktopInput = document.getElementById('desktop-search-input');
+
+    let query = '';
+    if (mobileInput && mobileInput.offsetParent !== null) {
+        query = mobileInput.value.toLowerCase();
+    } else if (desktopInput) {
+        query = desktopInput.value.toLowerCase();
+    }
+
     const category = state.activeCategory;
 
     const cards = document.querySelectorAll('.recipe-card-lg');
