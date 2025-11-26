@@ -156,7 +156,7 @@ const views = {
                     <div class="brand-tag">FrigoLens AI</div>
                     <h1 class="welcome-title">Tu Chef IA<br>en un clic</h1>
                     <p class="welcome-text">Haz una foto a tu nevera. Nuestra IA detecta tus ingredientes y te dice qué cocinar al instante.</p>
-                    <button class="btn-primary" onclick="render('login')">Escanear Nevera</button>
+                    <button class="btn-primary" onclick="checkLoginAndScan()">Escanear Nevera</button>
                 </div>
             </div>
         </div>
@@ -521,6 +521,14 @@ window.logout = async () => {
         render('welcome');
     } catch (error) {
         console.error("Error en logout:", error);
+    }
+};
+
+window.checkLoginAndScan = () => {
+    if (state.user) {
+        startCamera();
+    } else {
+        render('login');
     }
 };
 
