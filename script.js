@@ -70,10 +70,10 @@ const views = {
                     <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
                 </div>
                 <div class="welcome-content">
-                    <div class="brand-tag">FrigoLens</div>
-                    <h1 class="welcome-title">Comida deliciosa<br>para tu familia</h1>
-                    <p class="welcome-text">Descubre recetas increíbles con lo que ya tienes en tu nevera.</p>
-                    <button class="btn-primary" onclick="render('login')">Empezar a Cocinar</button>
+                    <div class="brand-tag">FrigoLens AI</div>
+                    <h1 class="welcome-title">Tu Chef IA<br>en un clic</h1>
+                    <p class="welcome-text">Haz una foto a tu nevera. Nuestra IA detecta tus ingredientes y te dice qué cocinar al instante.</p>
+                    <button class="btn-primary" onclick="render('login')">Escanear Nevera</button>
                 </div>
             </div>
         </div>
@@ -305,10 +305,31 @@ function render(viewName, param) {
     window.scrollTo(0, 0);
 }
 
-window.mockLogin = (provider) => {
-    // Simulate login for demo purposes
-    state.user = { name: 'Gerard', email: 'gerard@example.com' };
-    goHome();
+window.mockLogin = async (provider) => {
+    if (provider === 'Google') {
+        try {
+            const googleProvider = new window.GoogleAuthProvider();
+            const result = await window.signInWithPopup(window.firebaseAuth, googleProvider);
+            const user = result.user;
+
+            state.user = {
+                name: user.displayName || 'FrigoLender',
+                email: user.email,
+                photo: user.photoURL
+            };
+
+            localStorage.setItem('user', JSON.stringify(state.user));
+            goHome();
+        } catch (error) {
+            console.error("Error en login:", error);
+            alert("Error al iniciar sesión con Google. Inténtalo de nuevo.");
+        }
+    } else if (provider === 'Apple') {
+        alert("Login con Apple próximamente. Por ahora usa Google o Email.");
+    } else {
+        // Email login - skip for now
+        goHome();
+    }
 };
 
 window.goHome = () => render('home');
@@ -489,7 +510,28 @@ async function generateRecipes() {
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is logged in (mock)
-    // For now always show welcome screen
-    render('welcome');
+    // Check if user is already logged in
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+        state.user = JSON.parse(savedUser);
+        render('home');
+    } else {
+        // Listen for auth state changes
+        if (window.onAuthStateChanged && window.firebaseAuth) {
+            window.onAuthStateChanged(window.firebaseAuth, (user) => {
+                if (user) {
+                    state.user = {
+                        name: user.displayName || 'FrigoLender',
+                        email: user.email,
+                        photo: user.photoURL
+                    };
+                    localStorage.setItem('user', JSON.stringify(state.user));
+                    if (state.view === 'welcome' || state.view === 'login') {
+                        render('home');
+                    }
+                }
+            });
+        }
+        render('welcome');
+    }
 });
