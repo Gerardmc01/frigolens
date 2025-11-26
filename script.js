@@ -672,7 +672,7 @@ window.toggleFavorite = async (recipeId) => {
 };
 
 // Search and Filter Functions
-window.state.activeCategory = 'all';
+state.activeCategory = 'all';
 
 window.selectCategory = (element, category) => {
     // Update active class
