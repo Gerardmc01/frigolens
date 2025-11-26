@@ -53,8 +53,8 @@ const views = {
                     <i class="ph ph-gear"></i>
                 </button>
                 <div class="hero-emoji">🧊✨</div>
-                <h1>FridgeMagic</h1>
-                <p>Tu nevera tiene secretos. <br>Deja que la IA te diga qué cocinar.</p>
+                <h1>FrigoLens</h1>
+                <p>¡Hola FrigoLender! <br>Tu nevera tiene secretos. Deja que la IA te diga qué cocinar.</p>
                 <button class="btn btn-primary" onclick="startCamera()">
                     <i class="ph ph-camera"></i> Escanear Nevera
                 </button>

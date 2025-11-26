@@ -1,4 +1,4 @@
-# FridgeMagic AI 🧊✨
+# FrigoLens 🧊✨
 
 Una aplicación web espectacular que usa IA para escanear tu nevera y sugerirte recetas.
 
