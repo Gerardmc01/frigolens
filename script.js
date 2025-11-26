@@ -1,13 +1,25 @@
 // State Management
 const state = {
-    view: 'home', // home, camera, results
+    view: 'home', // home, camera, selection, results
     inventory: [],
+    selectedIngredients: new Set(),
     recipes: [],
     capturedImage: null,
     apiKey: localStorage.getItem('gemini_api_key') || ''
 };
 
 // Mock Data
+const MOCK_INVENTORY = [
+    { name: 'Huevos', icon: '🥚' },
+    { name: 'Leche', icon: '🥛' },
+    { name: 'Tomates', icon: '🍅' },
+    { name: 'Queso', icon: '🧀' },
+    { name: 'Espinacas', icon: '🍃' },
+    { name: 'Pollo', icon: '🍗' },
+    { name: 'Aguacate', icon: '🥑' },
+    { name: 'Pan', icon: '🍞' }
+];
+
 const MOCK_RECIPES = [
     {
         title: 'Tortilla Francesa Deluxe',
@@ -24,22 +36,6 @@ const MOCK_RECIPES = [
         icon: '🥘',
         calories: '450 kcal',
         desc: 'Jugoso pollo asado con base de tomates.'
-    },
-    {
-        title: 'Tostada de Aguacate',
-        time: '5 min',
-        difficulty: 'Fácil',
-        icon: '🥑',
-        calories: '320 kcal',
-        desc: 'Desayuno energético y saludable.'
-    },
-    {
-        title: 'Ensalada Caprese',
-        time: '5 min',
-        difficulty: 'Fácil',
-        icon: '🥗',
-        calories: '180 kcal',
-        desc: 'Fresca, ligera y mediterránea.'
     }
 ];
 
@@ -71,18 +67,26 @@ const BottomNav = (activeTab) => `
     </nav>
 `;
 
-const Header = () => `
+const Header = (title = '') => `
     <header class="app-header">
-        <div class="user-profile">
-            <div class="avatar">👤</div>
-            <div class="greeting">
-                <span>Hola, FrigoLender</span>
-                <span>¿Qué cocinamos hoy?</span>
+        ${title ? `
+            <button class="btn-icon" onclick="goHome()" style="border:none; background:transparent;">
+                <i class="ph ph-arrow-left" style="font-size: 1.5rem;"></i>
+            </button>
+            <span style="font-weight: 700; font-size: 1.1rem;">${title}</span>
+            <div style="width: 44px;"></div>
+        ` : `
+            <div class="user-profile">
+                <div class="avatar">FL</div>
+                <div class="greeting">
+                    <span>Hola, FrigoLender</span>
+                    <span>¿Qué cocinamos hoy?</span>
+                </div>
             </div>
-        </div>
-        <button class="btn-icon" onclick="openSettings()">
-            <i class="ph ph-gear"></i>
-        </button>
+            <button class="btn-icon" onclick="openSettings()">
+                <i class="ph ph-gear"></i>
+            </button>
+        `}
     </header>
 `;
 
@@ -92,42 +96,38 @@ const views = {
         <div class="container">
             ${Header()}
             
-            <div class="hero-banner">
-                <h1>Descubre recetas <br>con tu nevera</h1>
-                <p>Usa la IA para crear platos increíbles con lo que ya tienes.</p>
-                <button class="btn btn-white" style="background: white; color: var(--primary); width: auto; padding: 12px 24px;" onclick="startCamera()">
-                    Escanear Ahora
-                </button>
-                <div class="hero-decoration">🥗</div>
-            </div>
-
-            <div class="section-header">
-                <span class="section-title">Categorías</span>
-                <a href="#" class="see-all">Ver todo</a>
-            </div>
-            
-            <div class="categories-scroll">
-                <div class="category-pill active">🔥 Popular</div>
-                <div class="category-pill">🥗 Saludable</div>
-                <div class="category-pill">⏱️ Rápido</div>
-                <div class="category-pill">🍰 Postres</div>
+            <div class="hero-banner" onclick="startCamera()" style="cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop" class="hero-bg" alt="Food">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-tag">✨ Nueva Receta</span>
+                    <h1 class="hero-title">Abre tu nevera,<br>descubre magia.</h1>
+                    <p class="hero-desc">Escanea tus ingredientes y crea platos increíbles en segundos.</p>
+                    <button class="btn btn-primary" style="width: auto; padding: 12px 24px;">
+                        <i class="ph ph-camera"></i> Escanear Ahora
+                    </button>
+                </div>
             </div>
 
             <div class="section-header">
                 <span class="section-title">Recetas Populares</span>
+                <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Ver todo</a>
             </div>
 
             <div class="recipe-list">
                 ${MOCK_RECIPES.map(recipe => `
                     <div class="recipe-card">
-                        <div class="recipe-img-box">${recipe.icon}</div>
-                        <div class="recipe-info">
+                        <div class="recipe-image">
+                            ${recipe.icon}
+                        </div>
+                        <div class="recipe-content">
                             <div class="recipe-title">${recipe.title}</div>
                             <div class="recipe-meta">
                                 <span><i class="ph-fill ph-clock"></i> ${recipe.time}</span>
                                 <span><i class="ph-fill ph-fire"></i> ${recipe.calories}</span>
+                                <span><i class="ph-fill ph-chart-bar"></i> ${recipe.difficulty}</span>
                             </div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary);">${recipe.desc}</div>
+                            <button class="cook-btn">Cocinar Ahora</button>
                         </div>
                     </div>
                 `).join('')}
@@ -141,7 +141,7 @@ const views = {
         <div class="camera-view">
             <div class="camera-header">
                 <button class="btn-icon" style="background: rgba(0,0,0,0.5); color: white; border: none;" onclick="goHome()">
-                    <i class="ph ph-arrow-left"></i>
+                    <i class="ph ph-x"></i>
                 </button>
                 <span style="color: white; font-weight: 600;">Escanear Comida</span>
                 <button class="btn-icon" style="background: rgba(0,0,0,0.5); color: white; border: none;">
@@ -152,10 +152,6 @@ const views = {
             <div class="camera-feed-box">
                 <video id="camera-feed" autoplay playsinline></video>
                 <canvas id="camera-canvas" style="display:none;"></canvas>
-                <div id="scan-overlay" class="scan-overlay" style="display:none;">
-                    <div class="scan-line"></div>
-                    <p style="margin-top: 20px;">Analizando ingredientes...</p>
-                </div>
             </div>
             
             <div class="camera-actions">
@@ -163,50 +159,73 @@ const views = {
                     <i class="ph ph-image" style="font-size: 1.5rem;"></i>
                 </button>
                 <button class="shutter-btn" onclick="capturePhoto()"></button>
-                <div style="width: 44px;"></div> <!-- Spacer -->
+                <div style="width: 44px;"></div>
+            </div>
+        </div>
+    `,
+
+    loading: (msg) => `
+        <div class="container" style="display: flex; flex-direction: column; justify-content: center;">
+            <div class="loader-container">
+                <div class="loader-emoji">🤔</div>
+                <h2>Analizando...</h2>
+                <p style="color: var(--text-secondary); margin-top: 10px;">${msg}</p>
+            </div>
+        </div>
+    `,
+
+    selection: () => `
+        <div class="container">
+            ${Header('Selecciona Ingredientes')}
+            
+            <div class="selection-header">
+                <p style="color: var(--text-secondary);">Hemos encontrado estos ingredientes. Selecciona los que quieras usar.</p>
+            </div>
+
+            <div class="selection-grid">
+                ${state.inventory.map((item, index) => `
+                    <div class="ingredient-check-card ${state.selectedIngredients.has(item.name) ? 'selected' : ''}" 
+                         onclick="toggleIngredient('${item.name}')">
+                        <div class="check-circle"></div>
+                        <span style="font-size: 2.5rem;">${item.icon}</span>
+                        <span style="font-weight: 600; font-size: 0.9rem; text-align: center;">${item.name}</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="floating-action-bar">
+                <button class="btn btn-primary" onclick="generateRecipes()">
+                    Crear Recetas (${state.selectedIngredients.size})
+                </button>
             </div>
         </div>
     `,
 
     results: () => `
         <div class="container">
-            <div class="app-header">
-                <button class="btn-icon" onclick="goHome()">
-                    <i class="ph ph-arrow-left"></i>
-                </button>
-                <span style="font-weight: 700; font-size: 1.1rem;">Resultados</span>
-                <div style="width: 44px;"></div>
-            </div>
+            ${Header('Recetas Sugeridas')}
 
-            <div style="padding: 24px;">
-                <h2 style="margin-bottom: 20px;">Ingredientes Detectados</h2>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;">
-                    ${state.inventory.map(item => `
-                        <div style="background: white; padding: 8px 16px; border-radius: 100px; border: 1px solid var(--border-light); display: flex; align-items: center; gap: 6px;">
-                            <span>${item.icon}</span>
-                            <span style="font-weight: 500;">${item.name}</span>
+            <div class="recipe-list" style="padding-top: 20px;">
+                ${state.recipes.map(recipe => `
+                    <div class="recipe-card">
+                        <div class="recipe-image">
+                            ${recipe.icon}
                         </div>
-                    `).join('')}
-                </div>
-
-                <h2 style="margin-bottom: 20px;">Recetas Sugeridas</h2>
-                <div class="recipe-list" style="padding: 0;">
-                    ${state.recipes.map(recipe => `
-                        <div class="recipe-card">
-                            <div class="recipe-img-box">${recipe.icon}</div>
-                            <div class="recipe-info">
-                                <div class="recipe-title">${recipe.title}</div>
-                                <div class="recipe-meta">
-                                    <span><i class="ph-fill ph-clock"></i> ${recipe.time}</span>
-                                    <span><i class="ph-fill ph-fire"></i> ${recipe.difficulty}</span>
-                                </div>
-                                <p style="font-size: 0.85rem; color: var(--text-secondary);">${recipe.desc}</p>
+                        <div class="recipe-content">
+                            <div class="recipe-title">${recipe.title}</div>
+                            <div class="recipe-meta">
+                                <span><i class="ph-fill ph-clock"></i> ${recipe.time}</span>
+                                <span><i class="ph-fill ph-fire"></i> ${recipe.difficulty}</span>
                             </div>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">${recipe.desc}</p>
+                            <button class="cook-btn">Ver Receta</button>
                         </div>
-                    `).join('')}
-                </div>
-                
-                <button class="btn btn-primary" style="margin-top: 20px;" onclick="startCamera()">
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div style="padding: 24px;">
+                <button class="btn btn-secondary" onclick="startCamera()">
                     Escanear otra vez
                 </button>
             </div>
@@ -231,9 +250,9 @@ const settingsModal = `
 `;
 
 // Core Functions
-function render(viewName) {
+function render(viewName, param) {
     state.view = viewName;
-    app.innerHTML = views[viewName]();
+    app.innerHTML = views[viewName](param);
 
     if (!document.getElementById('settings-modal')) {
         document.body.insertAdjacentHTML('beforeend', settingsModal);
@@ -265,6 +284,15 @@ window.saveSettings = () => {
     alert("¡Configuración guardada!");
 };
 
+window.toggleIngredient = (name) => {
+    if (state.selectedIngredients.has(name)) {
+        state.selectedIngredients.delete(name);
+    } else {
+        state.selectedIngredients.add(name);
+    }
+    render('selection'); // Re-render to update UI
+};
+
 // Camera & AI Logic
 async function initCamera() {
     const video = document.getElementById('camera-feed');
@@ -283,7 +311,6 @@ async function initCamera() {
 window.capturePhoto = () => {
     const video = document.getElementById('camera-feed');
     const canvas = document.getElementById('camera-canvas');
-    const overlay = document.getElementById('scan-overlay');
 
     if (!video.srcObject) return;
 
@@ -293,9 +320,8 @@ window.capturePhoto = () => {
 
     state.capturedImage = canvas.toDataURL('image/jpeg');
     video.pause();
-    overlay.style.display = 'flex';
 
-    setTimeout(() => startAnalysis(), 1500);
+    identifyIngredients();
 };
 
 window.uploadPhoto = () => {
@@ -307,8 +333,7 @@ window.uploadPhoto = () => {
             const reader = new FileReader();
             reader.onload = (evt) => {
                 state.capturedImage = evt.target.result;
-                render('camera'); // Show camera view briefly for consistency or go straight to analysis
-                setTimeout(() => startAnalysis(), 500);
+                identifyIngredients();
             };
             reader.readAsDataURL(e.target.files[0]);
         }
@@ -316,29 +341,25 @@ window.uploadPhoto = () => {
     input.click();
 };
 
-async function startAnalysis() {
+// Step 1: Identify Ingredients
+async function identifyIngredients() {
+    render('loading', 'Identificando ingredientes...');
+
     if (!state.apiKey) {
         setTimeout(() => {
-            state.inventory = [
-                { name: 'Huevos', icon: '🥚' },
-                { name: 'Leche', icon: '🥛' },
-                { name: 'Tomates', icon: '🍅' }
-            ];
-            state.recipes = MOCK_RECIPES;
-            render('results');
-        }, 2000);
+            state.inventory = MOCK_INVENTORY;
+            state.selectedIngredients = new Set(MOCK_INVENTORY.map(i => i.name));
+            render('selection');
+        }, 1500);
         return;
     }
 
     try {
         const base64Data = state.capturedImage.split(',')[1];
         const prompt = `
-        Analiza esta imagen de comida.
-        Responde con JSON:
-        {
-            "inventory": [{"name": "Ingrediente", "icon": "Emoji"}],
-            "recipes": [{"title": "Nombre", "time": "15 min", "difficulty": "Fácil", "icon": "Emoji", "desc": "Breve descripción"}]
-        }
+        Identifica TODOS los ingredientes de comida en esta imagen.
+        Responde SOLO con un JSON:
+        [{"name": "Nombre", "icon": "Emoji"}]
         `;
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
@@ -358,13 +379,62 @@ async function startAnalysis() {
         const text = data.candidates[0].content.parts[0].text;
         const result = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
 
-        state.inventory = result.inventory;
-        state.recipes = result.recipes;
+        state.inventory = Array.isArray(result) ? result : result.inventory || [];
+        state.selectedIngredients = new Set(state.inventory.map(i => i.name));
+        render('selection');
+    } catch (error) {
+        console.error(error);
+        alert("Error identificando ingredientes.");
+        goHome();
+    }
+}
+
+// Step 2: Generate Recipes
+async function generateRecipes() {
+    if (state.selectedIngredients.size === 0) {
+        alert("Selecciona al menos un ingrediente.");
+        return;
+    }
+
+    render('loading', 'El Chef IA está creando recetas...');
+
+    if (!state.apiKey) {
+        setTimeout(() => {
+            state.recipes = MOCK_RECIPES;
+            render('results');
+        }, 1500);
+        return;
+    }
+
+    try {
+        const ingredientsList = Array.from(state.selectedIngredients).join(', ');
+        const prompt = `
+        Crea 3 recetas detalladas usando PRINCIPALMENTE estos ingredientes: ${ingredientsList}.
+        Puedes asumir ingredientes básicos de despensa (sal, aceite, etc).
+        Responde SOLO con un JSON:
+        [{"title": "Nombre", "time": "XX min", "difficulty": "Fácil/Medio", "icon": "Emoji", "desc": "Descripción breve"}]
+        `;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.candidates[0].content.parts[0].text;
+        const result = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
+
+        state.recipes = result;
         render('results');
     } catch (error) {
         console.error(error);
-        alert("Error en el análisis. Comprueba tu API Key.");
-        goHome();
+        alert("Error generando recetas.");
+        render('selection');
     }
 }
 
