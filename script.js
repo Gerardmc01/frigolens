@@ -27,6 +27,7 @@ const MOCK_RECIPES = [
         difficulty: 'Fácil',
         icon: '🍳',
         calories: '250 kcal',
+        category: 'Desayuno',
         desc: 'Rápida, nutritiva y deliciosa.',
         steps: [
             'Bate 3 huevos en un bol con sal y pimienta',
@@ -43,6 +44,7 @@ const MOCK_RECIPES = [
         difficulty: 'Medio',
         icon: '🥘',
         calories: '450 kcal',
+        category: 'Almuerzo',
         desc: 'Jugoso pollo asado con base de tomates.',
         steps: [
             'Precalienta el horno a 180°C',
@@ -52,6 +54,39 @@ const MOCK_RECIPES = [
             'Hornea durante 40-45 minutos hasta dorar'
         ],
         ingredients: ['Pollo', 'Tomates', 'Hierbas']
+    },
+    {
+        id: '3',
+        title: 'Ensalada César',
+        time: '15 min',
+        difficulty: 'Fácil',
+        icon: '🥗',
+        calories: '320 kcal',
+        category: 'Cena',
+        desc: 'Clásica ensalada con pollo y picatostes.',
+        steps: [
+            'Lava la lechuga y córtala',
+            'Añade el pollo a la plancha cortado en tiras',
+            'Agrega los picatostes y queso parmesano',
+            'Aliña con salsa César al gusto'
+        ],
+        ingredients: ['Lechuga', 'Pollo', 'Pan', 'Queso']
+    },
+    {
+        id: '4',
+        title: 'Yogur con Frutas',
+        time: '5 min',
+        difficulty: 'Fácil',
+        icon: '🥣',
+        calories: '180 kcal',
+        category: 'Snack',
+        desc: 'Un snack saludable y refrescante.',
+        steps: [
+            'Vierte el yogur en un bol',
+            'Añade frutas cortadas (fresas, plátano)',
+            'Espolvorea granola o nueces por encima'
+        ],
+        ingredients: ['Yogur', 'Fruta', 'Granola']
     }
 ];
 
@@ -172,7 +207,7 @@ const views = {
         <div class="container">
             <header class="home-header">
                 <div class="user-row">
-                    <div class="user-info">
+                    <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
                         <div class="avatar">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
                         <div class="greeting">
                             <p>Buenas tardes,</p>
@@ -186,24 +221,25 @@ const views = {
                 
                 <div class="search-bar">
                     <i class="ph ph-magnifying-glass"></i>
-                    <span>Buscar recetas...</span>
+                    <input type="text" id="search-input" placeholder="Buscar recetas..." onkeyup="filterRecipes()" style="border: none; outline: none; width: 100%; font-size: 1rem; color: var(--text-main); background: transparent;">
                 </div>
             </header>
 
             <div class="categories-section">
-                <div class="categories-scroll">
-                    <div class="category-pill active">Desayuno</div>
-                    <div class="category-pill">Almuerzo</div>
-                    <div class="category-pill">Cena</div>
-                    <div class="category-pill">Snack</div>
+                <div class="categories-scroll" id="category-scroll">
+                    <div class="category-pill active" onclick="selectCategory(this, 'all')">Todo</div>
+                    <div class="category-pill" onclick="selectCategory(this, 'Desayuno')">Desayuno</div>
+                    <div class="category-pill" onclick="selectCategory(this, 'Almuerzo')">Almuerzo</div>
+                    <div class="category-pill" onclick="selectCategory(this, 'Cena')">Cena</div>
+                    <div class="category-pill" onclick="selectCategory(this, 'Snack')">Snack</div>
                 </div>
             </div>
 
             <div class="popular-section">
                 <div class="section-title">Recetas Populares</div>
-                <div class="horizontal-scroll">
-                    ${MOCK_RECIPES.map(recipe => `
-                        <div class="recipe-card-lg" onclick="viewRecipe('${recipe.id}')">
+                <div class="horizontal-scroll" id="recipes-container">
+                    ${[...MOCK_RECIPES, ...state.recipes].map(recipe => `
+                        <div class="recipe-card-lg" data-title="${recipe.title.toLowerCase()}" data-category="${recipe.category || 'all'}" onclick="viewRecipe('${recipe.id}')">
                             <div class="recipe-img-lg">
                                 ${recipe.icon}
                                 <button class="fav-btn" onclick="event.stopPropagation(); toggleFavorite('${recipe.id}')">
@@ -476,8 +512,8 @@ const settingsModal = `
                 </div>
             ` : ''}
             
-            <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">Gemini API Key</label>
-            <input type="password" id="api-key-input" class="input-field" placeholder="Pega tu API Key aquí...">
+            <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">Clave de Acceso (IA)</label>
+            <input type="password" id="api-key-input" class="input-field" placeholder="Pega tu clave aquí...">
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 24px;">
                 Necesaria para que la IA funcione.
             </p>
@@ -596,6 +632,41 @@ window.toggleFavorite = async (recipeId) => {
         await saveFavorite(recipe);
     }
     render(state.view); // Re-render current view
+};
+
+// Search and Filter Functions
+window.state.activeCategory = 'all';
+
+window.selectCategory = (element, category) => {
+    // Update active class
+    document.querySelectorAll('.category-pill').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    // Update state and filter
+    state.activeCategory = category;
+    filterRecipes();
+};
+
+window.filterRecipes = () => {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput ? searchInput.value.toLowerCase() : '';
+    const category = state.activeCategory;
+
+    const cards = document.querySelectorAll('.recipe-card-lg');
+
+    cards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        const cardCategory = card.getAttribute('data-category');
+
+        const matchesSearch = title.includes(query);
+        const matchesCategory = category === 'all' || cardCategory === category;
+
+        if (matchesSearch && matchesCategory) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 };
 
 window.shareRecipe = (recipeId) => {

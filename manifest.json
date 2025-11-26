@@ -1,0 +1,32 @@
+{
+  "name": "FrigoLens",
+  "short_name": "FrigoLens",
+  "description": "Tu Chef IA - Escanea tu nevera y descubre qué cocinar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF6B00",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://em-content.zobj.net/source/apple/391/pot-of-food_1f372.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://em-content.zobj.net/source/apple/391/pot-of-food_1f372.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "productivity"],
+  "screenshots": [
+    {
+      "src": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ]
+}
