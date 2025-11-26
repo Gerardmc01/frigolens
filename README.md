@@ -1,39 +1,52 @@
-# FrigoLens 🧊✨
+# FrigoLens 🍳
 
-Una aplicación web espectacular que usa IA para escanear tu nevera y sugerirte recetas.
+**Tu Chef IA en un clic**
 
-## 🚀 Cómo desplegar en GitHub y Render
+Escanea tu nevera con la cámara y descubre qué puedes cocinar al instante con inteligencia artificial.
 
-### 1. Subir a GitHub
-Ya he inicializado el repositorio localmente. Solo necesitas conectarlo a tu GitHub:
+## 🚀 Demo en Vivo
 
-1. Crea un **nuevo repositorio** en GitHub (vacío).
-2. Ejecuta estos comandos en tu terminal (sustituye `TU_USUARIO` y `TU_REPO`):
+[https://frigolens.onrender.com](https://frigolens.onrender.com)
 
-```bash
-git remote add origin https://github.com/TU_USUARIO/TU_REPO.git
-git branch -M main
-git push -u origin main
-```
+## ⚙️ Configuración de Firebase
 
-### 2. Desplegar en Render
-1. Ve a [dashboard.render.com](https://dashboard.render.com).
-2. Haz clic en **New +** y selecciona **Static Site**.
-3. Conecta tu cuenta de GitHub y selecciona el repositorio que acabas de crear.
-4. Configuración:
-   - **Build Command**: (Déjalo vacío)
-   - **Publish Directory**: `./` (o `.` )
-5. Haz clic en **Create Static Site**.
+**IMPORTANTE**: Para que el login con Google funcione, debes añadir el dominio en Firebase:
 
-¡Y listo! Tu web estará online en unos segundos con una URL segura (https://...).
+1. Ve a [Firebase Console](https://console.firebase.google.com)
+2. Selecciona tu proyecto "FrigoLens"
+3. Ve a **Authentication** → **Settings** (pestaña)
+4. Baja hasta **Authorized domains**
+5. Haz clic en **Add domain**
+6. Añade: `frigolens.onrender.com`
+7. Guarda
 
-## ✨ Características
-- **Interfaz Moderna**: Diseño "Glassmorphism" con animaciones fluidas.
-- **Escáner de Nevera**: Usa la cámara del móvil para capturar ingredientes.
-- **IA Chef (Simulado)**: Identifica ingredientes y sugiere recetas (actualmente en modo Demo).
-- **Mobile First**: Diseñado para sentirse como una app nativa en tu móvil.
+Sin este paso, el login mostrará `about:blank` y no funcionará.
+
+## 🔑 API Key de Gemini
+
+Para que la IA funcione:
+1. Entra en la app
+2. Ve a **Perfil** (botón de usuario abajo a la derecha)
+3. Haz clic en **Configuración** (engranaje)
+4. Pega tu API Key de Google AI Studio
+5. Guarda
+
+## ✨ Funcionalidades
+
+- 📸 **Escaneo inteligente** - Detecta ingredientes con IA
+- ❤️ **Favoritos** - Guarda tus recetas preferidas
+- 🎯 **Preferencias** - Vegetariano, vegano, sin gluten, sin lácteos
+- 📤 **Compartir** - Envía recetas por WhatsApp
+- 👤 **Perfil** - Gestiona tu cuenta y configuración
 
 ## 🛠️ Tecnologías
-- HTML5, CSS3 (Variables, Flexbox, Grid, Animations)
-- Vanilla JavaScript (ES Modules)
-- Phosphor Icons (Iconos vectoriales ligeros)
+
+- Vanilla JavaScript
+- Firebase Authentication
+- Google Gemini AI
+- Phosphor Icons
+- Render (hosting)
+
+---
+
+Hecho con ❤️ por Gerard

@@ -133,13 +133,15 @@ const views = {
         <div class="container">
             <div class="welcome-view">
                 <div class="welcome-image-container">
-                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
                 </div>
                 <div class="welcome-content">
-                    <div class="brand-tag">FrigoLens AI</div>
-                    <h1 class="welcome-title">Tu Chef IA<br>en un clic</h1>
-                    <p class="welcome-text">Haz una foto a tu nevera. Nuestra IA detecta tus ingredientes y te dice qué cocinar al instante.</p>
-                    <button class="btn-primary" onclick="checkLoginAndScan()">Escanear Nevera</button>
+                    <div class="brand-tag">✨ Powered by AI</div>
+                    <h1 class="welcome-title">Escanea.<br>Cocina.<br>Disfruta.</h1>
+                    <p class="welcome-text">Apunta tu cámara a la nevera y descubre qué puedes cocinar en segundos.</p>
+                    <button class="btn-primary" onclick="checkLoginAndScan()">
+                        <i class="ph-fill ph-scan"></i> Empezar Ahora
+                    </button>
                 </div>
             </div>
         </div>
@@ -270,13 +272,13 @@ const views = {
                     </div>
 
                     <div style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-card);">
-                        <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Configuración</h3>
-                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Gemini API Key</label>
-                        <input type="password" id="api-key-input-profile" class="input-field" placeholder="Pega tu API Key aquí..." value="${state.apiKey}">
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 16px;">
-                            Necesaria para que la IA funcione.
-                        </p>
-                        <button class="btn-primary" onclick="saveApiKey()">Guardar API Key</button>
+                        <button onclick="openSettings()" style="width: 100%; padding: 16px; background: var(--bg-input); border: none; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="ph ph-gear" style="font-size: 1.5rem;"></i>
+                                <span style="font-weight: 600;">Configuración</span>
+                            </div>
+                            <i class="ph ph-caret-right"></i>
+                        </button>
                     </div>
 
                     <button onclick="confirmLogout()" style="width: 100%; padding: 16px; background: white; border: 1px solid #FF4B4B; color: #FF4B4B; border-radius: 100px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-card);">
