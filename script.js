@@ -230,18 +230,18 @@ const views = {
         return `
         <div class="container">
             <!-- Desktop Header -->
-            <div class="desktop-header desktop-only">
+            <div class="desktop-header desktop-only animate-fade-in">
                 <div class="desktop-logo">
                     <img src="logo.png" alt="FrigoLens Logo" style="height: 50px; width: auto;">
                 </div>
                 <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
                      <div class="avatar" style="width: 40px; height: 40px; font-size: 1.2rem;">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
-                     <span style="font-weight: 600;">${state.user ? state.user.name : 'Invitado'}</span>
+                     <span style="font-weight: 600; font-size: 1rem;">${state.user ? state.user.name : 'Invitado'}</span>
                 </div>
             </div>
 
             <!-- Desktop Nav -->
-            <div class="desktop-nav desktop-only">
+            <div class="desktop-nav desktop-only animate-fade-in delay-1">
                 <div class="desktop-nav-item active"><i class="ph ph-magnifying-glass"></i> Buscar</div>
                 <div class="desktop-nav-item" onclick="surpriseMe()"><i class="ph ph-sparkle"></i> Sugerencias IA</div>
                 <div class="desktop-nav-item" onclick="startCamera()"><i class="ph ph-camera"></i> Escanear</div>
@@ -249,18 +249,18 @@ const views = {
             </div>
 
             <!-- Desktop Search Section -->
-            <div class="desktop-search-container desktop-only">
-                <h2 style="margin-bottom: 20px; font-size: 1.5rem;">🔍 Buscar Recetas</h2>
+            <div class="desktop-search-container desktop-only animate-fade-in delay-2">
+                <h2 style="margin-bottom: 24px; font-size: 2rem; font-weight: 800; letter-spacing: -1px;">¿Qué cocinamos hoy? 🍳</h2>
                 <div class="desktop-search-bar">
-                    <input type="text" class="desktop-search-input" id="desktop-search-input" placeholder="¿Qué te apetece cocinar hoy?" onkeyup="filterRecipes()">
+                    <input type="text" class="desktop-search-input" id="desktop-search-input" placeholder="Busca ingredientes, recetas..." onkeyup="filterRecipes()">
                     <button class="desktop-search-btn"><i class="ph ph-magnifying-glass"></i></button>
                 </div>
             </div>
 
             <!-- Mobile Header -->
-            <header class="home-header mobile-only">
+            <header class="home-header mobile-only animate-fade-in">
                 <div class="user-row">
-                    <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
+                    <div class="user-info" onclick="showProfile()">
                         <div class="avatar">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
                         <div class="greeting">
                             <p>${getGreeting()},</p>
@@ -270,12 +270,12 @@ const views = {
                 </div>
                 
                 <div class="search-bar">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" id="search-input" placeholder="Buscar recetas..." onkeyup="filterRecipes()" style="border: none; outline: none; width: 100%; font-size: 1rem; color: var(--text-main); background: transparent;">
+                    <i class="ph ph-magnifying-glass" style="font-size: 1.2rem;"></i>
+                    <input type="text" id="search-input" placeholder="Buscar recetas..." onkeyup="filterRecipes()" style="border: none; outline: none; width: 100%; font-size: 1rem; color: var(--text-main); background: transparent; font-family: var(--font-main);">
                 </div>
             </header>
 
-            <div class="categories-section">
+            <div class="categories-section animate-fade-in delay-1">
                 <div class="categories-scroll" id="category-scroll">
                     <div class="category-pill active" onclick="selectCategory(this, 'all')">Todo</div>
                     <div class="category-pill" onclick="selectCategory(this, 'Desayuno')">Desayuno</div>
@@ -285,20 +285,20 @@ const views = {
                 </div>
             </div>
 
-            <div style="padding: 0 24px 24px;">
-                <div style="background: linear-gradient(135deg, #FFF2E5 0%, #FFE5CC 100%); border-radius: 20px; padding: 20px; display: flex; align-items: start; gap: 16px; box-shadow: var(--shadow-card);">
-                    <div style="font-size: 2rem;">${tip.icon}</div>
+            <div style="padding: 0 24px 32px;" class="animate-fade-in delay-2">
+                <div class="tip-card">
+                    <div style="font-size: 2.5rem;">${tip.icon}</div>
                     <div>
-                        <h3 style="font-size: 0.95rem; margin-bottom: 4px; color: var(--primary);">Tip del Día</h3>
-                        <p style="font-size: 0.9rem; line-height: 1.4; color: var(--text-main);">${tip.text}</p>
+                        <h3 style="font-size: 0.9rem; margin-bottom: 6px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-weight: 800;">Tip del Día</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-weight: 500;">${tip.text}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="popular-section">
-                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-                    Recetas Populares
-                    <button onclick="surpriseMe()" style="background: var(--primary-light); color: var(--primary); border: none; padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+            <div class="popular-section animate-fade-in delay-3">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-right: 24px;">
+                    <span style="font-size: 1.3rem; font-weight: 800;">Recetas Populares</span>
+                    <button onclick="surpriseMe()" style="background: var(--primary-light); color: var(--primary); border: none; padding: 8px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: transform 0.2s;">
                         🎲 Sorpréndeme
                     </button>
                 </div>
