@@ -167,16 +167,37 @@ const views = {
     welcome: () => `
         <div class="container">
             <div class="welcome-view">
-                <div class="welcome-image-container">
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
+                <div class="welcome-image-container" style="flex: 0.8; background: linear-gradient(180deg, #FFF2E5 0%, #FFFFFF 100%); border-radius: 0 0 40px 40px;">
+                    <img src="logo.png" class="welcome-img" alt="FrigoLens Logo" style="width: 140px; height: auto; border-radius: 0; box-shadow: none; animation: float 6s ease-in-out infinite;">
                 </div>
-                <div class="welcome-content">
-                    <img src="logo.png" alt="FrigoLens Logo" style="height: 60px; width: auto; margin: 0 auto 16px; display: block;">
-                    <div class="brand-tag">✨ Powered by AI</div>
-                    <h1 class="welcome-title">Escanea.<br>Cocina.<br>Disfruta.</h1>
-                    <p class="welcome-text">Apunta tu cámara a la nevera y descubre qué puedes cocinar en segundos.</p>
-                    <button class="btn-primary" onclick="checkLoginAndScan()">
-                        <i class="ph-fill ph-scan"></i> Empezar Ahora
+                <div class="welcome-content" style="flex: 1.2; justify-content: flex-start; padding-top: 40px;">
+                    <div class="brand-tag" style="background: #FFF2E5; padding: 8px 16px; border-radius: 100px; color: var(--primary); font-weight: 700; font-size: 0.85rem; margin-bottom: 24px; display: inline-block;">
+                        ✨ Escanea tu nevera con IA
+                    </div>
+                    
+                    <h1 class="welcome-title" style="font-size: 2.2rem; margin-bottom: 16px;">Tu Chef<br>Inteligente</h1>
+                    
+                    <div style="display: flex; gap: 20px; margin-bottom: 40px; justify-content: center; width: 100%;">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="width: 50px; height: 50px; background: #F3F4F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem;">📸</div>
+                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">Haz una foto</p>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="width: 50px; height: 50px; background: #FFF2E5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem; color: var(--primary);">🤖</div>
+                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">IA Analiza</p>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="width: 50px; height: 50px; background: #F3F4F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem;">🍳</div>
+                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">¡A Cocinar!</p>
+                        </div>
+                    </div>
+
+                    <p class="welcome-text" style="margin-bottom: 32px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                        Olvídate de pensar qué comer. Deja que nuestra IA te sugiera recetas con lo que ya tienes.
+                    </p>
+
+                    <button class="btn-primary" onclick="checkLoginAndScan()" style="box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);">
+                        <i class="ph-fill ph-camera"></i> Empezar Ahora
                     </button>
                 </div>
             </div>
