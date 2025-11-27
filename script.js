@@ -344,24 +344,42 @@ const views = {
                 
                 ${state.user ? `
                     <div style="text-align: center; margin-bottom: 32px;">
-                        <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 16px; font-size: 2rem;">
+                        <div class="avatar" style="width: 100px; height: 100px; margin: 0 auto 16px; font-size: 2.5rem; box-shadow: var(--shadow-float);">
                             ${state.user.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%; object-fit: cover;">` : '👤'}
                         </div>
-                        <h2 style="font-size: 1.3rem; margin-bottom: 4px;">${state.user.name}</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">${state.user.email}</p>
+                        <h2 style="font-size: 1.5rem; margin-bottom: 4px; font-weight: 800;">${state.user.name}</h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">${state.user.email}</p>
                     </div>
 
-                    <div style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-card);">
-                        <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Configuración</h3>
-                        <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Clave de Acceso (IA)</label>
-                        <input type="password" id="api-key-input-profile" class="input-field" placeholder="Pega tu clave aquí..." value="${state.apiKey}">
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 16px;">
-                            Necesaria para que la IA funcione.
-                        </p>
-                        <button class="btn-primary" onclick="saveApiKey()">Guardar Clave</button>
+                    <div style="display: grid; gap: 16px; margin-bottom: 32px;">
+                        <button onclick="alert('Próximamente: Ajustes de dieta y alergias 🥦')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 40px; height: 40px; background: #FFF2E5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem;">
+                                    <i class="ph-fill ph-fork-knife"></i>
+                                </div>
+                                <div style="text-align: left;">
+                                    <span style="display: block; font-weight: 700; color: var(--text-main);">Preferencias Alimentarias</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Vegetariano, Sin Gluten...</span>
+                                </div>
+                            </div>
+                            <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+                        </button>
+
+                        <button onclick="alert('Próximamente: Historial de recetas cocinadas 📚')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 40px; height: 40px; background: #E5F6FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0099FF; font-size: 1.2rem;">
+                                    <i class="ph-fill ph-book-bookmark"></i>
+                                </div>
+                                <div style="text-align: left;">
+                                    <span style="display: block; font-weight: 700; color: var(--text-main);">Mis Recetas</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Historial de cocina</span>
+                                </div>
+                            </div>
+                            <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+                        </button>
                     </div>
 
-                    <button onclick="confirmLogout()" style="width: 100%; padding: 16px; background: white; border: 1px solid #FF4B4B; color: #FF4B4B; border-radius: 100px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-card);">
+                    <button onclick="confirmLogout()" style="width: 100%; padding: 16px; background: #FFF5F5; border: none; color: #FF4B4B; border-radius: 100px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;">
                         <i class="ph ph-sign-out"></i> Cerrar Sesión
                     </button>
                 ` : `
@@ -538,12 +556,15 @@ const views = {
 };
 
 // Cooking Tips
+// Cooking Tips - Spicy & Fun Edition 🌶️
 const COOKING_TIPS = [
-    { icon: '🥑', text: 'Para madurar aguacates rápido, guárdalos en una bolsa de papel con un plátano.' },
-    { icon: '🍋', text: 'Saca más jugo a los limones rodándolos sobre la mesa antes de exprimirlos.' },
-    { icon: '🧄', text: 'Pela ajos fácilmente agitándolos fuertemente dentro de dos boles de metal.' },
-    { icon: '🧂', text: 'Si te has pasado de sal en una sopa, añade una patata pelada para que absorba el exceso.' },
-    { icon: '🥚', text: 'Para saber si un huevo es fresco, sumérgelo en agua: si se hunde, es fresco.' }
+    { icon: '🥑', text: 'Si tu aguacate está duro como una piedra, envuélvelo en papel con un plátano. ¡Madurará más rápido que tus decisiones un viernes noche!' },
+    { icon: '🔥', text: '¿La comida te quedó sosa? Un chorrito de limón o vinagre arregla casi cualquier desastre. ¡Es el maquillaje de la cocina!' },
+    { icon: '🍝', text: 'Guarda un poco del agua de cocer la pasta. Es oro líquido para que tu salsa se pegue mejor que tu ex.' },
+    { icon: '🧅', text: '¿Lloras con la cebolla? Métela 10 min al congelador antes de cortar. ¡Deja el drama para las telenovelas!' },
+    { icon: '🧂', text: 'Si te pasaste de sal, tira una patata pelada a la olla. Chupará la sal como si no hubiera un mañana.' },
+    { icon: '🥩', text: 'Deja reposar la carne antes de cortarla. Si la cortas caliente, se desangra y se seca. ¡Paciencia, chef!' },
+    { icon: '🍷', text: 'Cocina con vino que te beberías. Si no te gusta en la copa, no te gustará en el plato. ¡Salud!' }
 ];
 
 const getGreeting = () => {
@@ -627,14 +648,7 @@ window.logout = async () => {
     }
 };
 
-window.saveApiKey = () => {
-    const input = document.getElementById('api-key-input-profile');
-    if (input) {
-        state.apiKey = input.value.trim();
-        localStorage.setItem('gemini_api_key', state.apiKey);
-        alert("¡API Key guardada!");
-    }
-};
+
 
 window.checkLoginAndScan = () => {
     if (state.user) {
