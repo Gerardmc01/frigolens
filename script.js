@@ -171,6 +171,7 @@ const views = {
                     <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop" class="welcome-img" alt="Food">
                 </div>
                 <div class="welcome-content">
+                    <img src="logo.png" alt="FrigoLens Logo" style="height: 60px; width: auto; margin: 0 auto 16px; display: block;">
                     <div class="brand-tag">✨ Powered by AI</div>
                     <h1 class="welcome-title">Escanea.<br>Cocina.<br>Disfruta.</h1>
                     <p class="welcome-text">Apunta tu cámara a la nevera y descubre qué puedes cocinar en segundos.</p>
@@ -210,7 +211,7 @@ const views = {
             <!-- Desktop Header -->
             <div class="desktop-header desktop-only">
                 <div class="desktop-logo">
-                    <i class="ph-fill ph-cooking-pot"></i> FRIGOLENS AI
+                    <img src="logo.png" alt="FrigoLens Logo" style="height: 50px; width: auto;">
                 </div>
                 <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
                      <div class="avatar" style="width: 40px; height: 40px; font-size: 1.2rem;">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
