@@ -167,38 +167,15 @@ const views = {
     welcome: () => `
         <div class="container">
             <div class="welcome-view">
-                <div class="welcome-image-container" style="flex: 0.8; background: linear-gradient(180deg, #FFF2E5 0%, #FFFFFF 100%); border-radius: 0 0 40px 40px;">
-                    <img src="logo.png" class="welcome-img" alt="FrigoLens Logo" style="width: 140px; height: auto; border-radius: 0; box-shadow: none; animation: float 6s ease-in-out infinite;">
-                </div>
-                <div class="welcome-content" style="flex: 1.2; justify-content: flex-start; padding-top: 40px;">
-                    <div class="brand-tag" style="background: #FFF2E5; padding: 8px 16px; border-radius: 100px; color: var(--primary); font-weight: 700; font-size: 0.85rem; margin-bottom: 24px; display: inline-block;">
-                        ✨ Escanea tu nevera con IA
-                    </div>
-                    
-                    <h1 class="welcome-title" style="font-size: 2.2rem; margin-bottom: 16px;">Tu Chef<br>Inteligente</h1>
-                    
-                    <div style="display: flex; gap: 20px; margin-bottom: 40px; justify-content: center; width: 100%;">
-                        <div style="text-align: center; flex: 1;">
-                            <div style="width: 50px; height: 50px; background: #F3F4F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem;">📸</div>
-                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">Haz una foto</p>
-                        </div>
-                        <div style="text-align: center; flex: 1;">
-                            <div style="width: 50px; height: 50px; background: #FFF2E5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem; color: var(--primary);">🤖</div>
-                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">IA Analiza</p>
-                        </div>
-                        <div style="text-align: center; flex: 1;">
-                            <div style="width: 50px; height: 50px; background: #F3F4F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.5rem;">🍳</div>
-                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">¡A Cocinar!</p>
-                        </div>
-                    </div>
-
-                    <p class="welcome-text" style="margin-bottom: 32px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                        Olvídate de pensar qué comer. Deja que nuestra IA te sugiera recetas con lo que ya tienes.
-                    </p>
-
-                    <button class="btn-primary" onclick="checkLoginAndScan()" style="box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);">
-                        <i class="ph-fill ph-camera"></i> Empezar Ahora
+                <div class="welcome-content">
+                    <img src="logo.png" alt="FrigoLens Logo" style="height: 80px; width: auto; margin: 0 auto 24px; display: block; filter: brightness(0) invert(1);">
+                    <div class="brand-tag">✨ Powered by AI</div>
+                    <h1 class="welcome-title">Escanea.<br>Cocina.<br>Disfruta.</h1>
+                    <p class="welcome-text">Apunta tu cámara a la nevera y descubre qué puedes cocinar en segundos.</p>
+                    <button class="btn-primary" onclick="checkLoginAndScan()">
+                        <i class="ph-fill ph-scan"></i> Empezar Ahora
                     </button>
+                    <a href="#" onclick="render('login')" class="guest-link">Ya tengo cuenta</a>
                 </div>
             </div>
         </div>
@@ -206,25 +183,25 @@ const views = {
 
     login: () => `
         <div class="container">
-            <div class="welcome-view" style="justify-content: center; padding: 32px;">
-                <div style="text-align: center; margin-bottom: 48px;">
-                    <img src="logo.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 24px; animation: float 6s infinite;">
-                    <h1 class="welcome-title" style="font-size: 2rem;">Bienvenido</h1>
+            <div class="welcome-view">
+                <div style="text-align: center; margin-bottom: 48px; width: 100%;">
+                    <img src="logo.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 24px; animation: float 6s infinite; filter: brightness(0) invert(1);">
+                    <h1 class="welcome-title" style="font-size: 2.5rem;">Bienvenido</h1>
                     <p class="welcome-text" style="margin-bottom: 0;">Tu cocina inteligente te espera.</p>
                 </div>
 
                 <div class="login-options" style="width: 100%; max-width: 320px; margin: 0 auto;">
-                    <button class="btn-social" onclick="loginWithGoogle()" style="margin-bottom: 16px; justify-content: center; font-weight: 700; padding: 18px; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                    <button class="btn-social" onclick="loginWithGoogle()" style="margin-bottom: 16px; justify-content: center; font-weight: 700; padding: 18px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                         <i class="ph-fill ph-google-logo" style="font-size: 1.4rem; color: #DB4437;"></i> Continuar con Google
                     </button>
                     
-                    <div style="display: flex; align-items: center; gap: 16px; margin: 24px 0; color: var(--text-muted);">
-                        <div style="height: 1px; background: #E5E7EB; flex: 1;"></div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin: 24px 0; color: rgba(255,255,255,0.6);">
+                        <div style="height: 1px; background: rgba(255,255,255,0.3); flex: 1;"></div>
                         <span style="font-size: 0.9rem;">o</span>
-                        <div style="height: 1px; background: #E5E7EB; flex: 1;"></div>
+                        <div style="height: 1px; background: rgba(255,255,255,0.3); flex: 1;"></div>
                     </div>
 
-                    <button onclick="skipLogin()" style="width: 100%; padding: 16px; background: transparent; border: 2px solid #F3F4F6; color: var(--text-muted); border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    <button onclick="skipLogin()" style="width: 100%; padding: 16px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); color: white; border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(5px);">
                         Entrar como Invitado
                     </button>
                 </div>
