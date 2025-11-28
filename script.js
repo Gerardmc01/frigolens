@@ -168,7 +168,7 @@ const views = {
         <div class="container">
             <div class="welcome-view">
                 <div class="welcome-content">
-                    <img src="logo.png" alt="FrigoLens Logo" style="height: 80px; width: auto; margin: 0 auto 24px; display: block; filter: brightness(0) invert(1);">
+                    <img src="logo.png" alt="FrigoLens Logo" style="height: 120px; width: auto; margin: 0 auto 24px; display: block;">
                     <div class="brand-tag">✨ Powered by AI</div>
                     <h1 class="welcome-title">Escanea.<br>Cocina.<br>Disfruta.</h1>
                     <p class="welcome-text">Apunta tu cámara a la nevera y descubre qué puedes cocinar en segundos.</p>
@@ -180,12 +180,11 @@ const views = {
             </div>
         </div>
     `,
-
     login: () => `
         <div class="container">
             <div class="welcome-view">
                 <div style="text-align: center; margin-bottom: 48px; width: 100%;">
-                    <img src="logo.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 24px; animation: float 6s infinite; filter: brightness(0) invert(1);">
+                    <img src="logo.png" alt="Logo" style="width: 100px; height: auto; margin-bottom: 24px; animation: float 6s infinite;">
                     <h1 class="welcome-title" style="font-size: 2.5rem;">Bienvenido</h1>
                     <p class="welcome-text" style="margin-bottom: 0;">Tu cocina inteligente te espera.</p>
                 </div>
