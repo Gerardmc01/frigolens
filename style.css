@@ -213,27 +213,24 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: white;
-    position: relative;
-    z-index: 200;
-}
-
-.welcome-image-container {
-    flex: 0.9;
-    position: relative;
-    display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, #FFF8F0 0%, #FFFFFF 70%);
-    overflow: hidden;
-    border-radius: 0 0 40px 40px;
+    text-align: center;
+    background: #FF5722;
+    /* Brand Orange */
+    padding: 40px 24px;
+    position: relative;
+    z-index: 200;
+    color: white;
+}
+
+/* Legacy container removal */
+.welcome-image-container {
+    display: none;
 }
 
 .welcome-img {
-    width: 140px;
-    height: auto;
-    filter: drop-shadow(0 20px 40px rgba(255, 107, 0, 0.15));
-    animation: float 6s ease-in-out infinite;
+    display: none;
 }
 
 .welcome-content {
