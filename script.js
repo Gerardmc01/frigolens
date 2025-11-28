@@ -632,7 +632,7 @@ const views = {
                             <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-main);">${item.name}</span>
                         </div>
                     `).join('')}
-                    <div onclick="alert('Añadir manual próximamente')" style="border: 2px dashed #E5E7EB; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; color: var(--text-muted); cursor: pointer;">
+                    <div onclick="addManualIngredient()" style="border: 2px dashed #E5E7EB; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; color: var(--text-muted); cursor: pointer; min-height: 100px;">
                         <i class="ph ph-plus" style="font-size: 1.5rem; margin-bottom: 4px;"></i>
                         <span style="font-size: 0.8rem;">Añadir</span>
                     </div>
@@ -985,26 +985,45 @@ window.uploadPhoto = () => {
     input.click();
 };
 
+// --- Logic & Actions ---
+
+window.addManualIngredient = () => {
+    const name = prompt("¿Qué ingrediente quieres añadir?");
+    if (name && name.trim()) {
+        const cleanName = name.trim();
+        // Add to inventory with a generic icon if not present
+        if (!state.inventory.find(i => i.name.toLowerCase() === cleanName.toLowerCase())) {
+            state.inventory.push({ name: cleanName, icon: '🥘' });
+        }
+        state.selectedIngredients.add(cleanName);
+        render('selection');
+    }
+};
+
+window.setOption = (type, value) => {
+    if (!state.options) state.options = { time: 'fast', style: 'light' };
+    state.options[type] = value;
+    render('selection'); // Re-render to update active buttons
+};
+
 async function identifyIngredients() {
     render('loading', 'Analizando tu nevera...');
 
-    // Initialize options if not present
+    // Initialize options
     if (!state.options) state.options = { time: 'fast', style: 'light' };
 
     if (!state.apiKey) {
-        // Mock fallback for demo
+        // Demo mode fallback (keep this for users without key, but make it clear)
         setTimeout(() => {
+            alert("Modo Demo: Usando ingredientes de prueba. Configura tu API Key en Ajustes para usar la IA real.");
             state.inventory = [
                 { name: 'Huevos', icon: '🥚' },
                 { name: 'Leche', icon: '🥛' },
-                { name: 'Tomates', icon: '🍅' },
-                { name: 'Queso', icon: '🧀' },
-                { name: 'Pollo', icon: '🍗' },
-                { name: 'Lechuga', icon: '🥬' }
+                { name: 'Tomates', icon: '🍅' }
             ];
             state.selectedIngredients = new Set(state.inventory.map(i => i.name));
             render('selection');
-        }, 1500);
+        }, 1000);
         return;
     }
 
@@ -1012,7 +1031,7 @@ async function identifyIngredients() {
         const base64Data = state.capturedImage.split(',')[1];
         const prompt = `
         ACTÚA COMO UN CHEF EXPERTO. Identifica los ingredientes en esta imagen.
-        Si la imagen no es clara, infiere ingredientes básicos comunes (huevos, leche, verduras).
+        Si la imagen es negra, borrosa o no hay comida, responde con una lista VACÍA []. NO INVENTES.
         Responde ESTRICTAMENTE con este JSON:
         [{"name": "Nombre", "icon": "Emoji"}]
         `;
@@ -1034,84 +1053,77 @@ async function identifyIngredients() {
         const text = data.candidates[0].content.parts[0].text;
         const result = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
 
-        // Fallback if empty
-        if (!result || result.length === 0) {
-            state.inventory = [
-                { name: 'No detectado', icon: '❓' },
-                { name: 'Huevos', icon: '🥚' },
-                { name: 'Leche', icon: '🥛' }
-            ];
-        } else {
-            state.inventory = result;
+        state.inventory = Array.isArray(result) ? result : [];
+
+        if (state.inventory.length === 0) {
+            alert("No he podido detectar comida clara. 🧐\n¡Añade los ingredientes manualmente!");
         }
 
         state.selectedIngredients = new Set(state.inventory.map(i => i.name));
         render('selection');
     } catch (error) {
         console.error(error);
-        alert("No pude ver bien la foto, pero aquí tienes algunos básicos.");
-        state.inventory = [
-            { name: 'Huevos', icon: '🥚' },
-            { name: 'Pasta', icon: '🍝' },
-            { name: 'Arroz', icon: '🍚' },
-            { name: 'Tomate', icon: '🍅' }
-        ];
-        state.selectedIngredients = new Set(state.inventory.map(i => i.name));
+        alert("Error al analizar la imagen. Inténtalo de nuevo o añade manual.");
+        state.inventory = [];
+        state.selectedIngredients = new Set();
         render('selection');
     }
 }
 
-window.setOption = (type, value) => {
-    state.options[type] = value;
-    render('selection'); // Re-render to update active buttons
-};
-
 async function generateRecipes() {
     if (state.selectedIngredients.size === 0) {
-        alert("Selecciona al menos un ingrediente.");
+        alert("¡Tu cesta está vacía! Añade al menos un ingrediente.");
         return;
     }
 
-    render('loading', 'El Chef está pensando... 👨‍🍳');
-
-    if (!state.apiKey) {
-        setTimeout(() => {
-            state.recipes = MOCK_RECIPES.map(r => ({ ...r, id: Date.now() + Math.random() }));
-            render('results');
-        }, 1500);
-        return;
-    }
+    render('loading', 'El Chef está creando tus recetas... 👨‍🍳');
 
     try {
         const ingredientsList = Array.from(state.selectedIngredients).join(', ');
 
-        // Build prompt with new options
-        const timePrompt = state.options.time === 'fast' ? 'RÁPIDAS (menos de 20 min)' : 'ELABORADAS (cocción lenta)';
+        const timePrompt = state.options.time === 'fast' ? 'RÁPIDAS (menos de 20 min)' : 'ELABORADAS (cocción lenta, gourmet)';
         const stylePrompt = state.options.style === 'light' ? 'LIGERAS y saludables' : 'CONTUNDENTES y ricas';
 
+        // Load preferences
+        const prefsText = Object.entries(state.preferences)
+            .filter(([k, v]) => v)
+            .map(([k]) => k === 'vegetarian' ? 'vegetariana' : k === 'vegan' ? 'vegana' : k === 'glutenFree' ? 'sin gluten' : 'sin lácteos')
+            .join(', ');
+
         const prompt = `
-        Crea 3 recetas ${timePrompt} y ${stylePrompt} usando: ${ingredientsList}.
+        Crea 5 recetas detalladas y deliciosas.
+        Estilo: ${timePrompt} y ${stylePrompt}.
+        Ingredientes disponibles: ${ingredientsList}.
+        ${prefsText ? `RESTRICCIONES OBLIGATORIAS: ${prefsText}.` : ''}
+        
         Responde SOLO con un JSON:
         [{
             "id": "unique_id",
-            "title": "Nombre",
+            "title": "Nombre Atractivo",
             "time": "XX min",
-            "difficulty": "Fácil/Medio",
-            "icon": "Emoji",
+            "difficulty": "Fácil/Medio/Difícil",
+            "icon": "Emoji representativo",
             "calories": "XXX kcal",
-            "desc": "Descripción breve",
-            "steps": ["Paso 1", "Paso 2"],
-            "ingredients": ["Ingrediente 1", "Ingrediente 2"]
+            "desc": "Descripción apetitosa de 2 frases.",
+            "steps": ["Paso 1 detallado", "Paso 2 detallado", ...],
+            "ingredients": ["Cantidad + Ingrediente 1", "Cantidad + Ingrediente 2", ...]
         }]
         `;
+
+        if (!state.apiKey) {
+            // Mock fallback
+            setTimeout(() => {
+                state.recipes = MOCK_RECIPES;
+                render('results');
+            }, 1500);
+            return;
+        }
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
+                contents: [{ parts: [{ text: prompt }] }]
             })
         });
 
@@ -1120,17 +1132,12 @@ async function generateRecipes() {
         const result = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
 
         state.recipes = result;
-
-        // Save to history
-        await saveToHistory({
-            ingredients: Array.from(state.selectedIngredients),
-            recipes: result
-        });
-
+        await saveToHistory({ ingredients: Array.from(state.selectedIngredients), recipes: result });
         render('results');
+
     } catch (error) {
         console.error(error);
-        alert("Error generando recetas. Intenta de nuevo.");
+        alert("Hubo un problema creando las recetas. Inténtalo de nuevo.");
         render('selection');
     }
 }
