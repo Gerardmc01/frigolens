@@ -341,7 +341,12 @@ const views = {
     profile: () => `
         <div class="container">
             <div style="padding: 24px;">
-                <h1 style="font-size: 1.8rem; margin-bottom: 32px;">Mi Perfil</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                    <h1 style="font-size: 1.8rem; margin: 0;">Mi Perfil</h1>
+                    <button onclick="render('settings')" style="background: white; border: none; width: 40px; height: 40px; border-radius: 50%; box-shadow: var(--shadow-sm); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="ph-fill ph-gear" style="font-size: 1.2rem;"></i>
+                    </button>
+                </div>
                 
                 ${state.user ? `
                     <div style="text-align: center; margin-bottom: 32px;">
@@ -353,27 +358,27 @@ const views = {
                     </div>
 
                     <div style="display: grid; gap: 16px; margin-bottom: 32px;">
-                        <button onclick="alert('Próximamente: Ajustes de dieta y alergias 🥦')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
+                        <button onclick="render('preferences')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <div style="width: 40px; height: 40px; background: #FFF2E5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem;">
                                     <i class="ph-fill ph-fork-knife"></i>
                                 </div>
                                 <div style="text-align: left;">
                                     <span style="display: block; font-weight: 700; color: var(--text-main);">Preferencias Alimentarias</span>
-                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Vegetariano, Sin Gluten...</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Vegetariano, Alergias...</span>
                                 </div>
                             </div>
                             <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
                         </button>
 
-                        <button onclick="alert('Próximamente: Historial de recetas cocinadas 📚')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
+                        <button onclick="render('history')" style="width: 100%; padding: 20px; background: white; border: none; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: var(--shadow-card);">
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <div style="width: 40px; height: 40px; background: #E5F6FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0099FF; font-size: 1.2rem;">
-                                    <i class="ph-fill ph-book-bookmark"></i>
+                                    <i class="ph-fill ph-clock-counter-clockwise"></i>
                                 </div>
                                 <div style="text-align: left;">
-                                    <span style="display: block; font-weight: 700; color: var(--text-main);">Mis Recetas</span>
-                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Historial de cocina</span>
+                                    <span style="display: block; font-weight: 700; color: var(--text-main);">Historial</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Recetas anteriores</span>
                                 </div>
                             </div>
                             <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
@@ -392,6 +397,103 @@ const views = {
                 `}
             </div>
             ${BottomNav('profile')}
+        </div>
+    `,
+
+    settings: () => `
+        <div class="container">
+            <div style="padding: 24px;">
+                <button onclick="render('profile')" style="border:none; background:none; font-size: 1.5rem; margin-bottom: 16px;">
+                    <i class="ph ph-arrow-left"></i>
+                </button>
+                <h1 style="font-size: 1.8rem; margin-bottom: 24px;">Ajustes</h1>
+
+                <div style="background: white; padding: 24px; border-radius: 24px; box-shadow: var(--shadow-card);">
+                    <h3 style="margin-bottom: 16px; font-size: 1rem;">Configuración de IA</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                        Introduce tu API Key de Google Gemini para activar la inteligencia artificial.
+                    </p>
+                    <input type="password" id="api-key-input" placeholder="Pegar API Key aquí" value="${state.apiKey || ''}" 
+                        style="width: 100%; padding: 16px; border: 2px solid #F3F4F6; border-radius: 16px; margin-bottom: 16px; font-family: monospace;">
+                    
+                    <button class="btn-primary" onclick="saveApiKeyInput()">Guardar Llave</button>
+                    
+                    <p style="margin-top: 16px; font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary);">Conseguir API Key gratis</a>
+                    </p>
+                </div>
+                
+                <div style="margin-top: 32px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                    FrigoLens v2.0.0<br>Made with 🧡 by AI
+                </div>
+            </div>
+        </div>
+    `,
+
+    preferences: () => `
+        <div class="container">
+            <div style="padding: 24px;">
+                <button onclick="render('profile')" style="border:none; background:none; font-size: 1.5rem; margin-bottom: 16px;">
+                    <i class="ph ph-arrow-left"></i>
+                </button>
+                <h1 style="font-size: 1.8rem; margin-bottom: 24px;">Preferencias</h1>
+                
+                <div style="display: grid; gap: 16px;">
+                    ${Object.keys(state.preferences).map(key => `
+                        <div onclick="togglePreference('${key}')" style="background: white; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); cursor: pointer;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="font-size: 1.5rem;">
+                                    ${key === 'vegetarian' ? '🥬' : key === 'vegan' ? '🌱' : key === 'glutenFree' ? '🌾' : '🥛'}
+                                </div>
+                                <span style="font-weight: 600; text-transform: capitalize;">
+                                    ${key === 'vegetarian' ? 'Vegetariano' : key === 'vegan' ? 'Vegano' : key === 'glutenFree' ? 'Sin Gluten' : 'Sin Lácteos'}
+                                </span>
+                            </div>
+                            <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid ${state.preferences[key] ? 'var(--primary)' : '#E5E7EB'}; background: ${state.preferences[key] ? 'var(--primary)' : 'transparent'}; display: flex; align-items: center; justify-content: center;">
+                                ${state.preferences[key] ? '<i class="ph-bold ph-check" style="color: white; font-size: 0.8rem;"></i>' : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `,
+
+    history: () => `
+        <div class="container">
+            <div style="padding: 24px;">
+                <button onclick="render('profile')" style="border:none; background:none; font-size: 1.5rem; margin-bottom: 16px;">
+                    <i class="ph ph-arrow-left"></i>
+                </button>
+                <h1 style="font-size: 1.8rem; margin-bottom: 24px;">Historial</h1>
+                
+                ${(!state.history || state.history.length === 0) ? `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                        <i class="ph ph-clock" style="font-size: 4rem; margin-bottom: 16px; display: block;"></i>
+                        <p>Aún no has cocinado nada.<br>¡Escanea tu nevera para empezar!</p>
+                    </div>
+                ` : `
+                    <div style="display: grid; gap: 16px;">
+                        ${state.history.map(item => `
+                            <div style="background: white; padding: 16px; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+                                    ${new Date(item.date).toLocaleDateString()}
+                                </div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">
+                                    Ingredientes: ${item.ingredients.join(', ')}
+                                </div>
+                                <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                                    ${item.recipes.map(r => `
+                                        <div onclick="viewRecipe('${r.id}')" style="background: #F9FAFB; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; white-space: nowrap; cursor: pointer;">
+                                            ${r.icon} ${r.title}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `}
+            </div>
         </div>
     `,
 
@@ -433,7 +535,7 @@ const views = {
                     </ol>
                     
                     <button class="btn-primary" onclick="shareRecipe('${recipe.id}')">
-                        <i class="ph ph-share-network"></i> Compartir por WhatsApp
+                        <i class="ph ph-share-network"></i> Compartir Receta
                     </button>
                     
                     <div style="height: 100px;"></div>
@@ -441,6 +543,7 @@ const views = {
             </div>
         `;
     },
+
 
     camera: () => `
         <div class="camera-container">
@@ -954,8 +1057,72 @@ async function generateRecipes() {
     }
 }
 
+window.saveApiKeyInput = () => {
+    const input = document.getElementById('api-key-input');
+    if (input && input.value) {
+        state.apiKey = input.value.trim();
+        localStorage.setItem('gemini_api_key', state.apiKey);
+        alert('API Key guardada correctamente ✨');
+        render('profile');
+    } else {
+        alert('Por favor, introduce una API Key válida.');
+    }
+};
+
+window.saveToHistory = async (data) => {
+    const historyItem = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        ingredients: data.ingredients,
+        recipes: data.recipes
+    };
+
+    state.history.unshift(historyItem);
+    // Keep only last 20 items
+    if (state.history.length > 20) state.history.pop();
+
+    localStorage.setItem('cooking_history', JSON.stringify(state.history));
+};
+
+window.shareRecipe = async (recipeId) => {
+    const recipe = [...MOCK_RECIPES, ...state.recipes].find(r => r.id === recipeId);
+    if (!recipe) return;
+
+    const text = `¡Mira esta receta de ${recipe.title} que encontré en FrigoLens! 🍳\n\n${recipe.desc}`;
+
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: recipe.title,
+                text: text,
+                url: window.location.href
+            });
+        } catch (err) {
+            console.log('Error sharing:', err);
+        }
+    } else {
+        // Fallback
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+};
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
+    // Load API Key
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) state.apiKey = savedKey;
+
+    // Load History
+    const savedHistory = localStorage.getItem('cooking_history');
+    if (savedHistory) {
+        try {
+            state.history = JSON.parse(savedHistory);
+        } catch (e) {
+            state.history = [];
+        }
+    }
+
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
         state.user = JSON.parse(savedUser);
@@ -975,9 +1142,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (state.view === 'welcome' || state.view === 'login') {
                         render('home');
                     }
+                } else {
+                    render('welcome');
                 }
             });
+        } else {
+            render('welcome');
         }
-        render('welcome');
     }
 });
