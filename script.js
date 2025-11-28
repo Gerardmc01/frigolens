@@ -836,9 +836,20 @@ async function identifyIngredients() {
     try {
         const base64Data = state.capturedImage.split(',')[1];
         const prompt = `
-        Identifica TODOS los ingredientes de comida en esta imagen.
-        Responde SOLO con un JSON:
-        [{"name": "Nombre", "icon": "Emoji"}]
+        ACTÚA COMO UN CHEF EXPERTO CON VISIÓN DE ÁGUILA. 🦅👨‍🍳
+        Tu misión es identificar ABSOLUTAMENTE TODOS los ingredientes comestibles en esta imagen de una nevera o despensa.
+        
+        INSTRUCCIONES PRECISAS:
+        1. Escanea cada estante, cajón y puerta.
+        2. Identifica frutas, verduras, lácteos, carnes, salsas, bebidas y sobras.
+        3. INFIERE contenidos: Si ves un cartón de leche, añade "Leche". Si ves una huevera, añade "Huevos". Si ves un tupper con algo rojo, añade "Salsa de tomate" o lo que parezca más probable.
+        4. NO inventes ingredientes que no estén, pero sí sé exhaustivo con lo que ves.
+        5. Ignora objetos no comestibles (platos vacíos, trapos).
+
+        Responde ESTRICTAMENTE con este formato JSON (sin texto adicional):
+        [
+            {"name": "Nombre del Ingrediente (en Español)", "icon": "Emoji correspondiente"}
+        ]
         `;
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
@@ -850,7 +861,11 @@ async function identifyIngredients() {
                         { text: prompt },
                         { inline_data: { mime_type: "image/jpeg", data: base64Data } }
                     ]
-                }]
+                }],
+                generationConfig: {
+                    temperature: 0.4, // Lower temperature for more precision
+                    maxOutputTokens: 1000
+                }
             })
         });
 
