@@ -207,20 +207,27 @@ const views = {
     login: () => `
         <div class="container">
             <div class="welcome-view" style="justify-content: center; padding: 32px;">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h1 class="welcome-title">Bienvenido</h1>
-                    <p class="welcome-text">Inicia sesión para guardar tus recetas favoritas.</p>
+                <div style="text-align: center; margin-bottom: 48px;">
+                    <img src="logo.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 24px; animation: float 6s infinite;">
+                    <h1 class="welcome-title" style="font-size: 2rem;">Bienvenido</h1>
+                    <p class="welcome-text" style="margin-bottom: 0;">Tu cocina inteligente te espera.</p>
                 </div>
 
-                <div class="login-options">
-                    <button class="btn-social btn-google" onclick="loginWithGoogle()">
-                        <i class="ph-fill ph-google-logo"></i> Continuar con Google
+                <div class="login-options" style="width: 100%; max-width: 320px; margin: 0 auto;">
+                    <button class="btn-social" onclick="loginWithGoogle()" style="margin-bottom: 16px; justify-content: center; font-weight: 700; padding: 18px; border-radius: 20px; box-shadow: var(--shadow-sm);">
+                        <i class="ph-fill ph-google-logo" style="font-size: 1.4rem; color: #DB4437;"></i> Continuar con Google
+                    </button>
+                    
+                    <div style="display: flex; align-items: center; gap: 16px; margin: 24px 0; color: var(--text-muted);">
+                        <div style="height: 1px; background: #E5E7EB; flex: 1;"></div>
+                        <span style="font-size: 0.9rem;">o</span>
+                        <div style="height: 1px; background: #E5E7EB; flex: 1;"></div>
+                    </div>
+
+                    <button onclick="skipLogin()" style="width: 100%; padding: 16px; background: transparent; border: 2px solid #F3F4F6; color: var(--text-muted); border-radius: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        Entrar como Invitado
                     </button>
                 </div>
-
-                <p style="text-align: center; margin-top: 32px; color: var(--text-muted); font-size: 0.9rem;">
-                    ¿Solo quieres probar? <a href="#" onclick="skipLogin()" style="color: var(--primary); font-weight: 600; text-decoration: none;">Continuar sin cuenta</a>
-                </p>
             </div>
         </div>
     `,
@@ -229,36 +236,8 @@ const views = {
         const tip = getRandomTip();
         return `
         <div class="container">
-            <!-- Desktop Header -->
-            <div class="desktop-header desktop-only animate-fade-in">
-                <div class="desktop-logo">
-                    <img src="logo.png" alt="FrigoLens Logo" style="height: 50px; width: auto;">
-                </div>
-                <div class="user-info" onclick="showProfile()" style="cursor: pointer;">
-                     <div class="avatar" style="width: 40px; height: 40px; font-size: 1.2rem;">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
-                     <span style="font-weight: 600; font-size: 1rem;">${state.user ? state.user.name : 'Invitado'}</span>
-                </div>
-            </div>
-
-            <!-- Desktop Nav -->
-            <div class="desktop-nav desktop-only animate-fade-in delay-1">
-                <div class="desktop-nav-item active"><i class="ph ph-magnifying-glass"></i> Buscar</div>
-                <div class="desktop-nav-item" onclick="surpriseMe()"><i class="ph ph-sparkle"></i> Sugerencias IA</div>
-                <div class="desktop-nav-item" onclick="startCamera()"><i class="ph ph-camera"></i> Escanear</div>
-                <div class="desktop-nav-item" onclick="showFavorites()"><i class="ph ph-heart"></i> Favoritos</div>
-            </div>
-
-            <!-- Desktop Search Section -->
-            <div class="desktop-search-container desktop-only animate-fade-in delay-2">
-                <h2 style="margin-bottom: 24px; font-size: 2rem; font-weight: 800; letter-spacing: -1px;">¿Qué cocinamos hoy? 🍳</h2>
-                <div class="desktop-search-bar">
-                    <input type="text" class="desktop-search-input" id="desktop-search-input" placeholder="Busca ingredientes, recetas..." onkeyup="filterRecipes()">
-                    <button class="desktop-search-btn"><i class="ph ph-magnifying-glass"></i></button>
-                </div>
-            </div>
-
-            <!-- Mobile Header -->
-            <header class="home-header mobile-only animate-fade-in">
+            <!-- Mobile Header (Always Visible) -->
+            <header class="home-header animate-fade-in">
                 <div class="user-row">
                     <div class="user-info" onclick="showProfile()">
                         <div class="avatar">${state.user?.photo ? `<img src="${state.user.photo}" style="width:100%; height:100%; border-radius:50%;">` : '👩‍🍳'}</div>
@@ -721,16 +700,10 @@ window.selectCategory = (element, category) => {
 };
 
 window.filterRecipes = () => {
-    const mobileInput = document.getElementById('search-input');
-    const desktopInput = document.getElementById('desktop-search-input');
+    const input = document.getElementById('search-input');
+    if (!input) return;
 
-    let query = '';
-    if (mobileInput && mobileInput.offsetParent !== null) {
-        query = mobileInput.value.toLowerCase();
-    } else if (desktopInput) {
-        query = desktopInput.value.toLowerCase();
-    }
-
+    const query = input.value.toLowerCase();
     const category = state.activeCategory;
 
     const cards = document.querySelectorAll('.recipe-card-lg');
@@ -744,6 +717,8 @@ window.filterRecipes = () => {
 
         if (matchesSearch && matchesCategory) {
             card.style.display = 'block';
+            // Add a subtle animation when appearing
+            card.style.animation = 'fadeIn 0.3s ease forwards';
         } else {
             card.style.display = 'none';
         }
