@@ -894,14 +894,23 @@ window.toggleIngredient = (name) => {
 
 async function initCamera() {
     const video = document.getElementById('camera-feed');
+    if (!video) return;
+
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' }
+            video: {
+                facingMode: 'environment',
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            },
+            audio: false
         });
         video.srcObject = stream;
+        // Explicitly play to ensure it starts on mobile
+        await video.play();
     } catch (err) {
         console.error("Camera error", err);
-        alert("No se pudo acceder a la cámara.");
+        alert("No se pudo acceder a la cámara. Asegúrate de dar permisos.");
         goHome();
     }
 }
@@ -910,14 +919,25 @@ window.capturePhoto = () => {
     const video = document.getElementById('camera-feed');
     const canvas = document.getElementById('camera-canvas');
 
-    if (!video.srcObject) return;
+    if (!video || !video.srcObject) return;
 
+    // Set canvas dimensions to match video stream
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
 
-    state.capturedImage = canvas.toDataURL('image/jpeg');
-    video.pause();
+    // Draw
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Stop stream to save battery and freeze frame effect
+    const stream = video.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach(track => track.stop());
+
+    state.capturedImage = canvas.toDataURL('image/jpeg', 0.8);
+
+    // Visual feedback
+    video.style.opacity = '0.5';
 
     identifyIngredients();
 };

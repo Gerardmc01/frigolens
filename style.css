@@ -45,7 +45,7 @@ body {
     align-items: flex-start;
 }
 
-/* --- App Container (The "Phone") --- */
+/* --- App Container (Desktop "Phone" Look) --- */
 .container {
     width: 100%;
     max-width: var(--app-max-width);
@@ -55,6 +55,24 @@ body {
     padding-bottom: 90px;
     box-shadow: var(--shadow-app);
     overflow-x: hidden;
+    margin: 0 auto;
+    /* Ensure centering on desktop */
+}
+
+/* --- Mobile Native Reset (The Fix) --- */
+@media (max-width: 480px) {
+    body {
+        background-color: var(--bg-body);
+        display: block;
+        /* Reset flex centering */
+    }
+
+    .container {
+        max-width: 100%;
+        box-shadow: none;
+        min-height: 100vh;
+        border-radius: 0;
+    }
 }
 
 /* --- Animations --- */
@@ -96,6 +114,97 @@ body {
 
 .delay-3 {
     animation-delay: 0.3s;
+}
+
+/* --- Camera UI (Full Screen Overlay) --- */
+.camera-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+}
+
+.camera-feed {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-top {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+}
+
+.camera-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    z-index: 10;
+}
+
+.camera-btn-sm {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.shutter-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.shutter-ring:active {
+    transform: scale(0.9);
+}
+
+.shutter-inner {
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 50%;
 }
 
 /* --- Layout --- */
