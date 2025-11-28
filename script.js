@@ -605,40 +605,66 @@ const views = {
 
     selection: () => `
         <div class="container">
-            <div style="padding: 24px 24px 0;">
-                <button onclick="goHome()" style="border:none; background:none; font-size: 1.5rem; margin-bottom: 16px;">
-                    <i class="ph ph-arrow-left"></i>
-                </button>
-                <h1 style="font-size: 1.8rem; line-height: 1.2;">Selecciona tus<br>Ingredientes</h1>
-                
-                <div style="margin: 20px 0; padding: 16px; background: var(--primary-light); border-radius: 16px;">
-                    <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 12px;"><strong>Preferencias:</strong></p>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        ${Object.entries(state.preferences).map(([key, value]) => `
-                            <button onclick="togglePreference('${key}')" style="padding: 6px 12px; border-radius: 100px; border: 1px solid var(--primary); background: ${value ? 'var(--primary)' : 'white'}; color: ${value ? 'white' : 'var(--primary)'}; font-size: 0.85rem; cursor: pointer;">
-                                ${key === 'vegetarian' ? '🥬 Vegetariano' : key === 'vegan' ? '🌱 Vegano' : key === 'glutenFree' ? '🌾 Sin Gluten' : '🥛 Sin Lácteos'}
-                            </button>
-                        `).join('')}
+            <div style="padding: 24px 24px 100px;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                    <button onclick="startCamera()" style="border:none; background: #F3F4F6; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="ph ph-arrow-left"></i>
+                    </button>
+                    <h1 style="font-size: 1.5rem; margin: 0;">Confirmar Ingredientes</h1>
+                </div>
+
+                <!-- Photo Preview -->
+                <div style="margin-bottom: 24px; border-radius: 20px; overflow: hidden; height: 120px; position: relative;">
+                    <img src="${state.capturedImage}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white; font-size: 0.8rem; font-weight: 600;">
+                        📸 Tu nevera
                     </div>
                 </div>
-            </div>
-
-            <div class="selection-view">
-                <div class="selection-grid">
+                
+                <!-- Ingredients Grid -->
+                <h3 style="margin-bottom: 12px; font-size: 1rem;">He encontrado esto:</h3>
+                <div class="selection-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; margin-bottom: 32px;">
                     ${state.inventory.map(item => `
                         <div class="ingredient-card ${state.selectedIngredients.has(item.name) ? 'selected' : ''}" 
-                             onclick="toggleIngredient('${item.name}')">
-                            <div class="ingredient-icon">${item.icon}</div>
-                            <span style="font-weight: 600; font-size: 0.9rem;">${item.name}</span>
+                             onclick="toggleIngredient('${item.name}')"
+                             style="background: ${state.selectedIngredients.has(item.name) ? 'var(--primary-light)' : 'white'}; border: 2px solid ${state.selectedIngredients.has(item.name) ? 'var(--primary)' : '#F3F4F6'}; padding: 12px; border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.2s;">
+                            <div style="font-size: 2rem; margin-bottom: 4px;">${item.icon}</div>
+                            <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-main);">${item.name}</span>
                         </div>
                     `).join('')}
+                    <div onclick="alert('Añadir manual próximamente')" style="border: 2px dashed #E5E7EB; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; color: var(--text-muted); cursor: pointer;">
+                        <i class="ph ph-plus" style="font-size: 1.5rem; margin-bottom: 4px;"></i>
+                        <span style="font-size: 0.8rem;">Añadir</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="floating-btn-container">
-                <button class="btn-primary" onclick="generateRecipes()">
-                    Cocinar (${state.selectedIngredients.size})
-                </button>
+                <!-- Cooking Options -->
+                <h3 style="margin-bottom: 12px; font-size: 1rem;">¿Cómo quieres cocinar hoy?</h3>
+                <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow-sm); margin-bottom: 24px;">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">TIEMPO</label>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="setOption('time', 'fast')" class="opt-btn ${state.options.time === 'fast' ? 'active' : ''}" style="flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #E5E7EB; background: white; font-size: 0.9rem;">⚡ Rápido</button>
+                            <button onclick="setOption('time', 'slow')" class="opt-btn ${state.options.time === 'slow' ? 'active' : ''}" style="flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #E5E7EB; background: white; font-size: 0.9rem;">🕰️ Elaborado</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">ESTILO</label>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="setOption('style', 'light')" class="opt-btn ${state.options.style === 'light' ? 'active' : ''}" style="flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #E5E7EB; background: white; font-size: 0.9rem;">🥗 Ligero</button>
+                            <button onclick="setOption('style', 'heavy')" class="opt-btn ${state.options.style === 'heavy' ? 'active' : ''}" style="flex: 1; padding: 10px; border-radius: 12px; border: 1px solid #E5E7EB; background: white; font-size: 0.9rem;">🥘 Contundente</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Action Button -->
+                <div style="position: fixed; bottom: 24px; left: 0; width: 100%; padding: 0 24px; z-index: 100;">
+                    <button class="btn-primary" onclick="generateRecipes()" style="box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="ph-fill ph-magic-wand"></i> Crear Recetas
+                    </button>
+                </div>
             </div>
         </div>
     `,
@@ -960,16 +986,21 @@ window.uploadPhoto = () => {
 };
 
 async function identifyIngredients() {
-    render('loading', 'Identificando ingredientes...');
+    render('loading', 'Analizando tu nevera...');
+
+    // Initialize options if not present
+    if (!state.options) state.options = { time: 'fast', style: 'light' };
 
     if (!state.apiKey) {
+        // Mock fallback for demo
         setTimeout(() => {
             state.inventory = [
                 { name: 'Huevos', icon: '🥚' },
                 { name: 'Leche', icon: '🥛' },
                 { name: 'Tomates', icon: '🍅' },
                 { name: 'Queso', icon: '🧀' },
-                { name: 'Pollo', icon: '🍗' }
+                { name: 'Pollo', icon: '🍗' },
+                { name: 'Lechuga', icon: '🥬' }
             ];
             state.selectedIngredients = new Set(state.inventory.map(i => i.name));
             render('selection');
@@ -980,20 +1011,10 @@ async function identifyIngredients() {
     try {
         const base64Data = state.capturedImage.split(',')[1];
         const prompt = `
-        ACTÚA COMO UN CHEF EXPERTO CON VISIÓN DE ÁGUILA. 🦅👨‍🍳
-        Tu misión es identificar ABSOLUTAMENTE TODOS los ingredientes comestibles en esta imagen de una nevera o despensa.
-        
-        INSTRUCCIONES PRECISAS:
-        1. Escanea cada estante, cajón y puerta.
-        2. Identifica frutas, verduras, lácteos, carnes, salsas, bebidas y sobras.
-        3. INFIERE contenidos: Si ves un cartón de leche, añade "Leche". Si ves una huevera, añade "Huevos". Si ves un tupper con algo rojo, añade "Salsa de tomate" o lo que parezca más probable.
-        4. NO inventes ingredientes que no estén, pero sí sé exhaustivo con lo que ves.
-        5. Ignora objetos no comestibles (platos vacíos, trapos).
-
-        Responde ESTRICTAMENTE con este formato JSON (sin texto adicional):
-        [
-            {"name": "Nombre del Ingrediente (en Español)", "icon": "Emoji correspondiente"}
-        ]
+        ACTÚA COMO UN CHEF EXPERTO. Identifica los ingredientes en esta imagen.
+        Si la imagen no es clara, infiere ingredientes básicos comunes (huevos, leche, verduras).
+        Responde ESTRICTAMENTE con este JSON:
+        [{"name": "Nombre", "icon": "Emoji"}]
         `;
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
@@ -1005,11 +1026,7 @@ async function identifyIngredients() {
                         { text: prompt },
                         { inline_data: { mime_type: "image/jpeg", data: base64Data } }
                     ]
-                }],
-                generationConfig: {
-                    temperature: 0.4, // Lower temperature for more precision
-                    maxOutputTokens: 1000
-                }
+                }]
             })
         });
 
@@ -1017,15 +1034,37 @@ async function identifyIngredients() {
         const text = data.candidates[0].content.parts[0].text;
         const result = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
 
-        state.inventory = Array.isArray(result) ? result : result.inventory || [];
+        // Fallback if empty
+        if (!result || result.length === 0) {
+            state.inventory = [
+                { name: 'No detectado', icon: '❓' },
+                { name: 'Huevos', icon: '🥚' },
+                { name: 'Leche', icon: '🥛' }
+            ];
+        } else {
+            state.inventory = result;
+        }
+
         state.selectedIngredients = new Set(state.inventory.map(i => i.name));
         render('selection');
     } catch (error) {
         console.error(error);
-        alert("Error identificando ingredientes.");
-        goHome();
+        alert("No pude ver bien la foto, pero aquí tienes algunos básicos.");
+        state.inventory = [
+            { name: 'Huevos', icon: '🥚' },
+            { name: 'Pasta', icon: '🍝' },
+            { name: 'Arroz', icon: '🍚' },
+            { name: 'Tomate', icon: '🍅' }
+        ];
+        state.selectedIngredients = new Set(state.inventory.map(i => i.name));
+        render('selection');
     }
 }
+
+window.setOption = (type, value) => {
+    state.options[type] = value;
+    render('selection'); // Re-render to update active buttons
+};
 
 async function generateRecipes() {
     if (state.selectedIngredients.size === 0) {
@@ -1033,7 +1072,7 @@ async function generateRecipes() {
         return;
     }
 
-    render('loading', 'Creando recetas...');
+    render('loading', 'El Chef está pensando... 👨‍🍳');
 
     if (!state.apiKey) {
         setTimeout(() => {
@@ -1045,15 +1084,13 @@ async function generateRecipes() {
 
     try {
         const ingredientsList = Array.from(state.selectedIngredients).join(', ');
-        const prefsText = Object.entries(state.preferences)
-            .filter(([k, v]) => v)
-            .map(([k]) => k === 'vegetarian' ? 'vegetariana' : k === 'vegan' ? 'vegana' : k === 'glutenFree' ? 'sin gluten' : 'sin lácteos')
-            .join(', ');
+
+        // Build prompt with new options
+        const timePrompt = state.options.time === 'fast' ? 'RÁPIDAS (menos de 20 min)' : 'ELABORADAS (cocción lenta)';
+        const stylePrompt = state.options.style === 'light' ? 'LIGERAS y saludables' : 'CONTUNDENTES y ricas';
 
         const prompt = `
-        Crea 3 recetas detalladas usando PRINCIPALMENTE estos ingredientes: ${ingredientsList}.
-        ${prefsText ? `Las recetas deben ser: ${prefsText}.` : ''}
-        Incluye pasos detallados.
+        Crea 3 recetas ${timePrompt} y ${stylePrompt} usando: ${ingredientsList}.
         Responde SOLO con un JSON:
         [{
             "id": "unique_id",
@@ -1063,8 +1100,8 @@ async function generateRecipes() {
             "icon": "Emoji",
             "calories": "XXX kcal",
             "desc": "Descripción breve",
-            "steps": ["Paso 1", "Paso 2", ...],
-            "ingredients": ["Ingrediente 1", "Ingrediente 2", ...]
+            "steps": ["Paso 1", "Paso 2"],
+            "ingredients": ["Ingrediente 1", "Ingrediente 2"]
         }]
         `;
 
@@ -1093,7 +1130,7 @@ async function generateRecipes() {
         render('results');
     } catch (error) {
         console.error(error);
-        alert("Error generando recetas.");
+        alert("Error generando recetas. Intenta de nuevo.");
         render('selection');
     }
 }
