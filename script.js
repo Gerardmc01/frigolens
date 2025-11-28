@@ -408,23 +408,44 @@ const views = {
                 </button>
                 <h1 style="font-size: 1.8rem; margin-bottom: 24px;">Ajustes</h1>
 
-                <div style="background: white; padding: 24px; border-radius: 24px; box-shadow: var(--shadow-card);">
-                    <h3 style="margin-bottom: 16px; font-size: 1rem;">Configuración de IA</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
-                        Introduce tu API Key de Google Gemini para activar la inteligencia artificial.
-                    </p>
-                    <input type="password" id="api-key-input" placeholder="Pegar API Key aquí" value="${state.apiKey || ''}" 
-                        style="width: 100%; padding: 16px; border: 2px solid #F3F4F6; border-radius: 16px; margin-bottom: 16px; font-family: monospace;">
+                <div style="background: white; border-radius: 24px; box-shadow: var(--shadow-card); overflow: hidden;">
+                    <div style="padding: 20px; border-bottom: 1px solid #F3F4F6; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; background: #FFF2E5; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                <i class="ph-fill ph-bell"></i>
+                            </div>
+                            <span style="font-weight: 600;">Notificaciones</span>
+                        </div>
+                        <div style="width: 50px; height: 30px; background: #34C759; border-radius: 100px; position: relative; cursor: pointer;">
+                            <div style="width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; right: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                        </div>
+                    </div>
                     
-                    <button class="btn-primary" onclick="saveApiKeyInput()">Guardar Llave</button>
-                    
-                    <p style="margin-top: 16px; font-size: 0.8rem; color: var(--text-muted); text-align: center;">
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary);">Conseguir API Key gratis</a>
-                    </p>
+                    <div style="padding: 20px; border-bottom: 1px solid #F3F4F6; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; background: #F3F4F6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-main);">
+                                <i class="ph-fill ph-moon"></i>
+                            </div>
+                            <span style="font-weight: 600;">Tema Oscuro</span>
+                        </div>
+                        <div style="width: 50px; height: 30px; background: #E5E7EB; border-radius: 100px; position: relative; cursor: pointer;">
+                            <div style="width: 26px; height: 26px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                        </div>
+                    </div>
+
+                    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; background: #E5F6FF; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #0099FF;">
+                                <i class="ph-fill ph-question"></i>
+                            </div>
+                            <span style="font-weight: 600;">Ayuda y Soporte</span>
+                        </div>
+                        <i class="ph ph-caret-right" style="color: var(--text-muted);"></i>
+                    </div>
                 </div>
                 
                 <div style="margin-top: 32px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-                    FrigoLens v2.0.0<br>Made with 🧡 by AI
+                    FrigoLens v2.0.0<br>Made with 🧡
                 </div>
             </div>
         </div>
@@ -1056,18 +1077,6 @@ async function generateRecipes() {
         render('selection');
     }
 }
-
-window.saveApiKeyInput = () => {
-    const input = document.getElementById('api-key-input');
-    if (input && input.value) {
-        state.apiKey = input.value.trim();
-        localStorage.setItem('gemini_api_key', state.apiKey);
-        alert('API Key guardada correctamente ✨');
-        render('profile');
-    } else {
-        alert('Por favor, introduce una API Key válida.');
-    }
-};
 
 window.saveToHistory = async (data) => {
     const historyItem = {
