@@ -1,677 +1,431 @@
-/* --- Global & Reset --- */
 :root {
-    --primary: #FF6B00;
-    --primary-light: #FFF2E5;
-    --secondary: #FFB800;
-    --accent: #FF4B4B;
-
-    --bg-body: #FAFAFA;
-    --bg-app: #FFFFFF;
-    --bg-input: #F3F4F6;
-
-    --text-main: #111827;
+    --primary: #FF5722;
+    --primary-dark: #E64A19;
+    --primary-light: #FFCCBC;
+    --text-main: #1F2937;
     --text-muted: #6B7280;
-
-    --radius-xl: 32px;
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 12px;
-
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
-    --shadow-float: 0 20px 40px rgba(255, 107, 0, 0.25);
-    --shadow-app: 0 0 60px rgba(0, 0, 0, 0.15);
-
-    --font-main: 'Outfit', sans-serif;
-    --nav-height: 80px;
-    --app-max-width: 480px;
+    --bg-body: #F9FAFB;
+    --bg-card: #FFFFFF;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --radius-lg: 16px;
+    --radius-xl: 24px;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: var(--font-main);
-    background-color: #f0f2f5;
-    /* Darker background for desktop context */
+    background-color: var(--bg-body);
     color: var(--text-main);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    padding-bottom: 80px;
+    /* Space for bottom nav */
 }
 
-/* --- App Container (Desktop "Phone" Look) --- */
+/* --- Utilities --- */
+.hidden {
+    display: none !important;
+}
+
 .container {
-    width: 100%;
-    max-width: var(--app-max-width);
-    background: var(--bg-body);
-    min-height: 100vh;
-    position: relative;
-    padding-bottom: 90px;
-    box-shadow: var(--shadow-app);
-    overflow-x: hidden;
+    padding: 20px;
+    max-width: 600px;
     margin: 0 auto;
-    /* Ensure centering on desktop */
 }
 
-/* --- Mobile Native Reset (The Fix) --- */
-@media (max-width: 480px) {
-    body {
-        background-color: var(--bg-body);
-        display: block;
-        /* Reset flex centering */
-    }
-
-    .container {
-        max-width: 100%;
-        box-shadow: none;
-        min-height: 100vh;
-        border-radius: 0;
-    }
+.text-center {
+    text-align: center;
 }
 
-/* --- Animations --- */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.mb-4 {
+    margin-bottom: 16px;
 }
 
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
+.mb-8 {
+    margin-bottom: 32px;
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+/* --- Welcome / Login (Orange Brand) --- */
+.welcome-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    z-index: 1000;
+    text-align: center;
 }
 
-.delay-1 {
-    animation-delay: 0.1s;
+.welcome-logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 24px;
+    /* No filter needed as per user request */
 }
 
-.delay-2 {
-    animation-delay: 0.2s;
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
 }
 
-.delay-3 {
-    animation-delay: 0.3s;
+.welcome-text {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    max-width: 320px;
 }
 
-/* --- Camera UI (Full Screen Overlay) --- */
-.camera-container {
+.btn-white {
+    background: white;
+    color: var(--primary);
+    border: none;
+    padding: 16px 32px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    width: 100%;
+    max-width: 300px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.btn-white:active {
+    transform: scale(0.98);
+}
+
+/* --- Bottom Nav --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 500;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.nav-item i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+/* --- Home Dashboard --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.feature-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.feature-card:active {
+    transform: scale(0.98);
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #FFF2E5;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.feature-title {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.feature-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* --- Chefs List --- */
+.chef-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.chef-card {
+    background: white;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+}
+
+.chef-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #eee;
+}
+
+.chef-info h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.chef-info p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* --- Chat Interface --- */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 140px);
+    /* Adjust for header/nav */
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.message.user {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.ai {
+    align-self: flex-start;
+    background: white;
+    color: var(--text-main);
+    border-bottom-left-radius: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.chat-input-area {
+    padding: 16px;
+    background: white;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-top: 1px solid #eee;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    border-radius: 100px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: var(--primary);
+}
+
+.btn-send,
+.btn-camera {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.btn-send {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-camera {
+    background: #F3F4F6;
+    color: var(--text-main);
+}
+
+/* --- Meal Plan --- */
+.calendar-strip {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+}
+
+.day-card {
+    min-width: 60px;
+    height: 80px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+
+.day-card.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.meal-slot {
+    background: white;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.meal-slot h4 {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meal-content {
+    font-weight: 600;
+}
+
+/* --- Camera Overlay --- */
+.camera-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: black;
-    z-index: 9999;
+    z-index: 2000;
     display: flex;
     flex-direction: column;
 }
 
 .camera-feed {
     flex: 1;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-#camera-feed {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 
-.camera-top {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 10;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
-}
-
-.camera-bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 40px 20px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    z-index: 10;
-}
-
-.camera-btn-sm {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: none;
-    color: white;
-    font-size: 1.2rem;
+.camera-controls {
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    gap: 40px;
+    background: rgba(0, 0, 0, 0.8);
 }
 
-.shutter-ring {
-    width: 80px;
-    height: 80px;
+.shutter-btn {
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     border: 4px solid white;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-.shutter-ring:active {
-    transform: scale(0.9);
 }
 
 .shutter-inner {
-    width: 64px;
-    height: 64px;
-    background: white;
-    border-radius: 50%;
-}
-
-/* --- Layout --- */
-/* --- Welcome / Login View --- */
-.welcome-view {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: #FF5722;
-    /* Brand Orange */
-    padding: 40px 24px;
-    position: relative;
-    z-index: 200;
-    color: white;
-}
-
-/* Legacy container removal */
-.welcome-image-container {
-    display: none;
-}
-
-.welcome-img {
-    display: none;
-}
-
-.welcome-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
-.brand-tag {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    backdrop-filter: blur(10px);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.welcome-title {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 16px;
-    letter-spacing: -1px;
-    color: white;
-}
-
-.welcome-text {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 40px;
-    max-width: 300px;
-    line-height: 1.6;
-}
-
-/* Updated Buttons for Orange Background */
-.btn-primary {
-    background: white;
-    color: #FF5722;
-    /* Orange text */
-    border: none;
-    padding: 18px 32px;
-    border-radius: 100px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    width: 100%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-primary:active {
-    transform: scale(0.98);
-}
-
-.btn-social {
-    background: white;
-    color: #333;
-    border: none;
-    padding: 16px;
-    border-radius: 100px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    width: 100%;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Guest Link */
-.guest-link {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    margin-top: 24px;
-    display: inline-block;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-    padding-bottom: 2px;
-}
-
-/* --- Header --- */
-.home-header {
-    padding: 24px 24px 0 24px;
-    background: var(--bg-body);
-}
-
-.user-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.user-info {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    background: white;
-    padding: 6px 16px 6px 6px;
-    border-radius: 100px;
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.user-info:active {
-    transform: scale(0.98);
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #FFD8B8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    overflow: hidden;
-}
-
-.greeting h1 {
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.greeting p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.search-bar {
-    background: white;
-    border-radius: var(--radius-xl);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    transition: all 0.2s;
-}
-
-.search-bar:focus-within {
-    box-shadow: var(--shadow-card);
-    border-color: var(--primary);
-    transform: translateY(-2px);
-}
-
-/* --- Categories --- */
-.categories-section {
-    padding-left: 24px;
-    margin-bottom: 32px;
-}
-
-.categories-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-right: 24px;
-    padding-bottom: 10px;
-    scrollbar-width: none;
-}
-
-.categories-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-.category-pill {
-    background: white;
-    border: 1px solid #F3F4F6;
-    padding: 10px 20px;
-    border-radius: 100px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
-}
-
-.category-pill.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    box-shadow: 0 8px 20px rgba(255, 107, 0, 0.25);
-    transform: translateY(-2px);
-}
-
-/* --- Recipe Cards --- */
-.popular-section {
-    padding-left: 24px;
-    margin-bottom: 32px;
-}
-
-.horizontal-scroll {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    padding-right: 24px;
-    padding-bottom: 24px;
-    scrollbar-width: none;
-}
-
-.horizontal-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-.recipe-card-lg {
-    min-width: 240px;
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 12px;
-    box-shadow: var(--shadow-card);
-    position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    transition: all 0.2s;
-}
-
-.recipe-card-lg:active {
-    transform: scale(0.98);
-}
-
-.recipe-img-lg {
-    width: 100%;
-    height: 160px;
-    border-radius: 16px;
-    background: #F8F9FA;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.fav-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FF4B4B;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.fav-btn:active {
-    transform: scale(0.9);
-}
-
-.recipe-title-lg {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-    padding: 0 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.recipe-meta {
-    display: flex;
-    gap: 10px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    padding: 0 4px 4px;
-}
-
-/* --- Tip Card --- */
-.tip-card {
-    background: linear-gradient(135deg, #FFF8F0 0%, #FFFFFF 100%);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    box-shadow: var(--shadow-card);
-    border: 1px solid rgba(255, 107, 0, 0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-.tip-card::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 100px;
-    height: 100px;
-    background: rgba(255, 107, 0, 0.05);
-    border-radius: 50%;
-}
-
-/* --- Bottom Nav (App Mode) --- */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: var(--app-max-width);
-    height: 70px;
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
-    z-index: 1000;
-    padding: 0 10px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #9CA3AF;
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 60px;
-    height: 100%;
-    transition: color 0.2s;
-}
-
-.nav-item.active {
-    color: var(--primary);
-    background: none;
-}
-
-.nav-item i {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
-}
-
-.scan-fab {
     width: 56px;
     height: 56px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    position: relative;
-    top: -20px;
-    box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
-    border: 4px solid var(--bg-body);
-    cursor: pointer;
-    transform: none;
-    transition: transform 0.2s;
-}
-
-.scan-fab i {
-    transform: none;
-}
-
-.scan-fab:active {
-    transform: scale(0.95);
-}
-
-/* --- Common --- */
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 18px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    width: 100%;
-    box-shadow: var(--shadow-float);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.btn-primary:active {
-    transform: scale(0.98);
-}
-
-/* --- Buttons & Inputs --- */
-.btn-social {
-    width: 100%;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid #E5E7EB;
     background: white;
-    font-weight: 600;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    border-radius: 50%;
+}
+
+.close-camera {
+    color: white;
+    font-size: 2rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-}
-
-.btn-social:active {
-    background: #F9FAFB;
-}
-
-/* --- Responsive Grid --- */
-.responsive-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.desktop-only {
-    display: none !important;
-}
-
-.mobile-only {
-    display: block !important;
+    z-index: 2001;
 }
