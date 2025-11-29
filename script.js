@@ -10,52 +10,52 @@ const state = {
     user: JSON.parse(localStorage.getItem('user')) || { name: 'Guest' }
 };
 
-// --- Chef Personas ---
+// --- Chef Personas (Spanish Rebrand) ---
 const CHEFS = [
     {
         id: 'pantry',
-        name: 'PantryChef',
-        role: 'Gestor de Despensa',
-        desc: 'Organiza tu cocina y sugiere recetas con lo que tienes.',
+        name: 'Chef de Despensa',
+        role: 'Aprovechamiento',
+        desc: 'Dime qué ingredientes tienes y te diré qué cocinar.',
         icon: 'ph-basket',
         color: '#FF9800',
-        systemPrompt: "Eres PantryChef. Tu objetivo es ayudar al usuario a usar los ingredientes que tiene en casa para evitar desperdicios. Sugiere recetas creativas basadas en listas de ingredientes. Sé práctico y directo."
+        systemPrompt: "Eres el Chef de Despensa de ChefIA. Tu misión es evitar el desperdicio de alimentos. El usuario te dirá qué ingredientes tiene. Tú debes sugerir recetas deliciosas y factibles usando PRINCIPALMENTE esos ingredientes. Si faltan básicos (sal, aceite), asume que los tienen. Sé creativo pero realista."
     },
     {
         id: 'master',
-        name: 'MasterChef',
-        role: 'Chef Ejecutivo',
-        desc: 'Técnicas avanzadas y platos gourmet.',
+        name: 'Chef Maestro',
+        role: 'Alta Cocina',
+        desc: 'Técnicas culinarias, trucos y recetas gourmet.',
         icon: 'ph-chef-hat',
         color: '#F44336',
-        systemPrompt: "Eres MasterChef. Eres un experto culinario con estrellas Michelin. Enseña técnicas, explica el 'por qué' de la cocina y sugiere platos elevados pero realizables. Tu tono es apasionado y profesional."
+        systemPrompt: "Eres el Chef Maestro de ChefIA. Un experto culinario de talla mundial. Tu objetivo es enseñar. No solo des recetas, explica el 'por qué' de las técnicas. Ayuda al usuario a mejorar sus habilidades, sugiere emplatados y trucos de profesional. Tu tono es inspirador y educativo."
     },
     {
         id: 'macro',
-        name: 'MacroChef',
-        role: 'Nutricionista IA',
-        desc: 'Analiza fotos de comida y cuenta calorías.',
+        name: 'NutriChef',
+        role: 'Salud y Calorías',
+        desc: 'Analizo tus platos y cuento las calorías por ti.',
         icon: 'ph-heart-beat',
         color: '#4CAF50',
-        systemPrompt: "Eres MacroChef. Tu especialidad es la nutrición. Cuando el usuario te envíe una foto de comida o describa un plato, estima las calorías, proteínas, carbohidratos y grasas. Sé preciso y ofrece consejos saludables. Si te envían una foto, analiza los ingredientes visibles y estima las porciones."
+        systemPrompt: "Eres NutriChef de ChefIA. Eres un nutricionista experto y amable. Cuando el usuario te describa una comida o envíe una foto, tu trabajo es estimar las calorías y macronutrientes (proteínas, carbos, grasas). Ofrece alternativas más saludables si es necesario. Si es una foto, analiza visualmente las porciones."
     },
     {
         id: 'plan',
-        name: 'MealPlanChef',
-        role: 'Planificador Semanal',
-        desc: 'Crea menús completos para toda la semana.',
+        name: 'Planificador',
+        role: 'Menú Semanal',
+        desc: 'Organizo tus comidas de la semana y la lista de compra.',
         icon: 'ph-calendar-plus',
         color: '#2196F3',
-        systemPrompt: "Eres MealPlanChef. Creas planes de comida semanales equilibrados y listas de la compra. Pregunta por preferencias dietéticas si no las sabes. Organiza la respuesta por días (Lunes a Domingo)."
+        systemPrompt: "Eres el Planificador de ChefIA. Creas planes de alimentación semanales estructurados. Pregunta por objetivos (perder peso, ganar músculo, ahorro de tiempo) y preferencias. Genera una tabla clara de Lunes a Domingo y una lista de la compra consolidada al final."
     },
     {
         id: 'mixology',
-        name: 'MixologyMaestro',
-        role: 'Bartender Experto',
-        desc: 'Cócteles y bebidas para cualquier ocasión.',
+        name: 'Coctelero',
+        role: 'Bebidas y Mixología',
+        desc: 'Cócteles, maridajes y bebidas para cada ocasión.',
         icon: 'ph-martini',
         color: '#9C27B0',
-        systemPrompt: "Eres MixologyMaestro. Un experto en cócteles y bebidas. Sugiere maridajes, recetas de cócteles clásicos y modernos, y bebidas sin alcohol. Tu estilo es sofisticado."
+        systemPrompt: "Eres el Coctelero de ChefIA. Experto en mixología. Sugiere cócteles (con y sin alcohol), vinos para maridar con comidas, y cafés especiales. Tu estilo es elegante y sofisticado."
     }
 ];
 
@@ -120,15 +120,20 @@ function updateActiveNav(viewName) {
 function renderWelcome() {
     return `
         <div class="welcome-view">
-            <img src="logo.png" class="welcome-logo" alt="FrigoLens Logo">
-            <h1 class="welcome-title">Conoce a<br>FrigoLens 👋</h1>
-            <p class="welcome-text">
-                Cocina lo que sea. Registra todo.<br>
-                Logra cualquier objetivo.<br><br>
-                Tu asistente de cocina integral impulsado por IA.
+            <div style="background: white; padding: 20px; border-radius: 24px; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                <img src="logo.png" class="welcome-logo" alt="ChefIA Logo" style="width: 80px; height: auto; margin-bottom: 0;">
+            </div>
+            <h1 class="welcome-title">Conoce a ChefIA 👋</h1>
+            <p class="welcome-text" style="font-size: 1.2rem; font-weight: 500;">
+                Cocina Lo que sea.<br>
+                Registra Todo.<br>
+                Logra Cualquier Objetivo.
+            </p>
+            <p class="welcome-text" style="font-size: 0.95rem; opacity: 0.8; margin-top: -20px;">
+                Tu asistente de cocina personal. Recetas, nutrición y planificación en un solo lugar.
             </p>
             <button class="btn-white" onclick="render('home')">Empezar Ahora</button>
-            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">¿Ya tienes cuenta? <b onclick="render('home')">Iniciar Sesión</b></p>
+            <p style="margin-top: 24px; font-size: 0.9rem; opacity: 0.8; cursor: pointer;" onclick="render('home')">Ya tengo cuenta</p>
         </div>
     `;
 }
@@ -138,33 +143,36 @@ function renderHome() {
         <div class="container">
             <div class="header">
                 <div>
-                    <h1 style="color: var(--primary);">Hola, Chef! 👨‍🍳</h1>
-                    <p style="color: var(--text-muted);">¿Qué cocinamos hoy?</p>
+                    <h1 style="color: var(--primary); margin-bottom: 4px;">ChefIA</h1>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Tu cocina inteligente</p>
                 </div>
-                <div style="width: 40px; height: 40px; background: #eee; border-radius: 50%; overflow: hidden;">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" style="width: 100%; height: 100%;">
+                <div style="width: 40px; height: 40px; background: #FFF2E5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                    <i class="ph-fill ph-user" style="font-size: 1.2rem;"></i>
                 </div>
             </div>
 
-            <h2 class="mb-4" style="font-size: 1.2rem;">Tus Chefs IA</h2>
+            <div style="background: linear-gradient(135deg, #FF5722 0%, #FF8A65 100%); color: white; padding: 24px; border-radius: 24px; margin-bottom: 32px; box-shadow: 0 10px 20px rgba(255, 87, 34, 0.2);">
+                <h2 style="font-size: 1.5rem; margin-bottom: 8px;">¿Qué quieres hacer hoy?</h2>
+                <p style="opacity: 0.9; margin-bottom: 20px;">Selecciona un experto para empezar.</p>
+                <button style="background: white; color: var(--primary); border: none; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 0.9rem; cursor: pointer;" onclick="startChat('pantry')">
+                    Sugerir Receta Rápida
+                </button>
+            </div>
+
+            <h3 class="mb-4" style="font-size: 1.1rem; font-weight: 700;">Tus Chefs Expertos</h3>
             <div class="feature-grid">
                 ${CHEFS.slice(0, 4).map(chef => `
                     <div class="feature-card" onclick="startChat('${chef.id}')">
-                        <div class="feature-icon" style="color: ${chef.color}; background: ${chef.color}20;">
+                        <div class="feature-icon" style="color: ${chef.color}; background: ${chef.color}15;">
                             <i class="ph-fill ${chef.icon}"></i>
                         </div>
-                        <span class="feature-title">${chef.name}</span>
-                        <span class="feature-desc">${chef.role}</span>
+                        <div class="feature-content">
+                            <span class="feature-title">${chef.name}</span>
+                            <span class="feature-desc">${chef.role}</span>
+                        </div>
+                        <i class="ph-caret-right" style="color: #ddd; margin-left: auto;"></i>
                     </div>
                 `).join('')}
-            </div>
-
-            <div style="background: var(--primary); color: white; padding: 24px; border-radius: 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;" onclick="startChat('plan')">
-                <div>
-                    <h3 style="font-size: 1.2rem; margin-bottom: 4px;">Plan Semanal</h3>
-                    <p style="font-size: 0.9rem; opacity: 0.9;">Organiza tus comidas</p>
-                </div>
-                <i class="ph-fill ph-arrow-right" style="font-size: 1.5rem;"></i>
             </div>
         </div>
     `;
